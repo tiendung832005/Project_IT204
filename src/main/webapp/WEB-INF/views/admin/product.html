@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile SHOP - Product</title>
+    <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+    <div class="logo">
+        Mobile <span class="shop-text">SHOP</span>
+    </div>
+</header>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+    <nav>
+        <ul class="sidebar-menu">
+            <li><a href="/admin/dashboard"><span class="icon">📊</span> Dashboard</a></li>
+            <li><a href="#"><span class="icon">👥</span> Customer</a></li>
+            <li><a href="/admin/product" class="active"><span class="icon">📱</span> Products</a></li>
+            <li><a href="#"><span class="icon">📄</span> Invoices</a></li>
+        </ul>
+    </nav>
+
+    <div class="sign-out">
+        <a href="/admin/login"><span class="icon">🚪</span> Sign out</a>
+    </div>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="products-section">
+        <div class="products-header">
+            <h3 class="products-title">Product Management</h3>
+            <button class="add-product-btn">+ Add Product</button>
+        </div>
+        <div class="top-controls">
+            <div class="search-box">
+                <input type="text" placeholder="Search products...">
+                <button class="search-btn">🔍</button>
+            </div>
+        </div>
+
+        <table class="product-table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Image</th>
+                <th>Product Name</th>
+                <th>Brand</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>1</td>
+                <td><img class="product-img" src="https://via.placeholder.com/50" alt="product"></td>
+                <td>iPhone 15 Pro Max</td>
+                <td>Apple</td>
+                <td>Smartphone</td>
+                <td>$1,199</td>
+                <td>35</td>
+                <td>
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td><img class="product-img" src="https://via.placeholder.com/50" alt="product"></td>
+                <td>Samsung Galaxy S24 Ultra</td>
+                <td>Samsung</td>
+                <td>Smartphone</td>
+                <td>$1,099</td>
+                <td>12</td>
+                <td>
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                </td>
+            </tr>
+            <!-- Thêm nhiều rows nữa tùy data -->
+            </tbody>
+        </table>
+        <div class="bottom-pagination">
+            <div class="pagination">
+                <button class="page-btn disabled">«</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">»</button>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

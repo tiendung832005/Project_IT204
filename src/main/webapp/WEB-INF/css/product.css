@@ -1,0 +1,154 @@
+.products-section {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #F1F3F4;
+}
+
+.products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.products-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.add-product-btn {
+    background: #FF6B35;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-product-btn:hover {
+    background: #E55A2B;
+}
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.product-table th, .product-table td {
+    padding: 15px 10px;
+    text-align: left;
+    border-bottom: 1px solid #F1F3F4;
+    vertical-align: middle;
+}
+
+.product-table th {
+    background: #F8F9FA;
+    font-weight: 600;
+    color: #6C757D;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.product-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #DEE2E6;
+}
+
+.edit-btn, .delete-btn {
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.edit-btn {
+    background: #007BFF;
+    color: white;
+}
+
+.delete-btn {
+    background: #DC3545;
+    color: white;
+}
+/* Search box ở góc phải trên */
+.top-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+/* Giữ nguyên search-box như cũ */
+.search-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #DEE2E6;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+}
+
+.search-box input {
+    border: none;
+    padding: 10px 15px;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+.search-btn {
+    padding: 10px 15px;
+    background: #FF6B35;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Pagination dưới cùng */
+.bottom-pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.pagination {
+    display: flex;
+    gap: 8px;
+}
+
+.page-btn {
+    padding: 8px 14px;
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.page-btn:hover {
+    background: #FF6B35;
+    color: white;
+    border-color: #FF6B35;
+}
+
+.page-btn.active {
+    background: #FF6B35;
+    color: white;
+    border-color: #FF6B35;
+}
+
+.page-btn.disabled {
+    color: #CCC;
+    cursor: not-allowed;
+}
