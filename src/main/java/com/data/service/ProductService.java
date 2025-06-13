@@ -35,4 +35,20 @@ public class ProductService {
     public boolean deleteProduct(Integer id) {
         return productRepository.deleteById(id);
     }
+
+    public Product getProductById(Integer id) {
+        return productRepository.findById(id);
+    }
+
+    public boolean updateProduct(Product product) {
+        return productRepository.update(product);
+    }
+
+    public boolean isNameDuplicate(String name, Integer id) {
+        return productRepository.existsByNameAndIdNot(name, id);
+    }
+
+    public boolean isNameDuplicate(String name) {
+        return productRepository.existsByName(name);
+    }
 }

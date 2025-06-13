@@ -174,4 +174,113 @@ public class ProductRepository {
             }
         }
     }
+
+    public Product findById(Integer id) {
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            Product product = session.get(Product.class, id);
+
+            transaction.commit();
+            return product;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
+
+    public boolean update(Product product) {
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            session.update(product);
+
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
+
+    public boolean existsByNameAndIdNot(String name, Integer id) {
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            Query<Long> query = session.createQuery(
+                    "SELECT COUNT(*) FROM Product WHERE name = :name AND id != :id",
+                    Long.class
+            );
+            query.setParameter("name", name);
+            query.setParameter("id", id);
+
+            Long count = query.uniqueResult();
+
+            transaction.commit();
+            return count != null && count > 0;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
+
+    public boolean existsByName(String name) {
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            Query<Long> query = session.createQuery(
+                    "SELECT COUNT(*) FROM Product WHERE name = :name",
+                    Long.class
+            );
+            query.setParameter("name", name);
+
+            Long count = query.uniqueResult();
+
+            transaction.commit();
+            return count != null && count > 0;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
 }
