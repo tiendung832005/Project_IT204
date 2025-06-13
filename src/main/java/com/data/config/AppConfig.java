@@ -1,5 +1,6 @@
 package com.data.config;
 
+import com.data.entity.Product;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

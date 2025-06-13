@@ -19,6 +19,40 @@
     color: #333;
 }
 
+.top-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #DEE2E6;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    max-width: 300px;
+}
+
+.search-box input {
+    border: none;
+    padding: 10px 15px;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+.search-btn {
+    padding: 10px 15px;
+    background: #FF6B35;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+
 .add-product-btn {
     background: #FF6B35;
     color: white;
@@ -59,7 +93,7 @@
     height: 50px;
     object-fit: cover;
     border-radius: 8px;
-    border: 1px solid #DEE2E6;
+    border: 1px none;
 }
 
 .edit-btn, .delete-btn {
@@ -72,45 +106,23 @@
 }
 
 .edit-btn {
-    background: #007BFF;
+    background: none;
     color: white;
+    width: 15px;
+    height: 16.67px;
+    top: 1.67px;
+    left: 2.5px;
+    border: 1.67px;
 }
 
 .delete-btn {
-    background: #DC3545;
-    color: white;
-}
-/* Search box ở góc phải trên */
-.top-controls {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 20px;
-}
-
-/* Giữ nguyên search-box như cũ */
-.search-box {
-    display: flex;
-    align-items: center;
-    border: 1px solid #DEE2E6;
-    border-radius: 8px;
-    overflow: hidden;
-    background: white;
-}
-
-.search-box input {
-    border: none;
-    padding: 10px 15px;
-    outline: none;
-    font-size: 0.95rem;
-}
-
-.search-btn {
-    padding: 10px 15px;
-    background: #FF6B35;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
+    background: none;
+    color: red;
+    width: 15px;
+    height: 16.67px;
+    top: 1.67px;
+    left: 2.5px;
+    border: 1.67px;
 }
 
 /* Pagination dưới cùng */
@@ -152,3 +164,101 @@
     color: #CCC;
     cursor: not-allowed;
 }
+/* Modal overlay */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0; top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+/* Modal content */
+.modal-content {
+    background-color: #fff;
+    margin: 8% auto;
+    padding: 20px 30px;
+    border-radius: 8px;
+    width: 700px;
+    height: 519px;
+    position: relative;
+}
+
+/* Close button */
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Form styles */
+.modal-content h2 {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.upload-box {
+    position: relative;
+    border: 1px solid #FF6B35;
+    background: #FF6B35;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.upload-box input[type="file"] {
+    opacity: 0;
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    cursor: pointer;
+}
+
+.form-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.cancel-btn {
+    background-color: #f1f1f1;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.save-btn {
+    background-color: #FF6B35;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+

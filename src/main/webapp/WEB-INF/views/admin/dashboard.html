@@ -1,261 +1,287 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mobile SHOP - Admin Dashboard</title>
-    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/dashboard.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-<!-- Header -->
-<header class="header">
-    <div class="logo">
-        Mobile <span class="shop-text">SHOP</span>
-    </div>
-</header>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">Mobile <span class="shop-text">SHOP</span></div>
+    </header>
 
-<!-- Sidebar -->
-<aside class="sidebar">
-    <nav>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav>
         <ul class="sidebar-menu">
-            <li><a href="/admin/dashboard" class="active"><span class="icon">📊</span> Dashboard</a></li>
-            <li><a href="#"><span class="icon">👥</span> Customer</a></li>
-            <li><a href="/admin/product"><span class="icon">📱</span> Products</a></li>
-            <li><a href="#"><span class="icon">📄</span> Invoices</a></li>
+          <li>
+            <a href="/admin/dashboard" class="active"
+              ><span class="icon">📊</span> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="#"><span class="icon">👥</span> Customer</a>
+          </li>
+          <li>
+            <a href="/admin/product"><span class="icon">📱</span> Products</a>
+          </li>
+          <li>
+            <a href="#"><span class="icon">📄</span> Invoices</a>
+          </li>
         </ul>
-    </nav>
+      </nav>
 
-    <div class="sign-out">
-        <a href="/admin/login"><span class="icon">🚪</span> Sign out</a>
-    </div>
-</aside>
+      <div class="sign-out">
+        <a href="/admin/logout"><span class="icon">🚪</span> Sign out</a>
+      </div>
+    </aside>
 
-<!-- Main Content -->
-<main class="main-content">
-    <!-- Stats Cards -->
-    <div class="stats-grid">
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Stats Cards -->
+      <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-label">Total Revenue</div>
-            <div class="stat-value">$12,426</div>
-            <div class="stat-change positive">+36% ↑</div>
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value">$12,426</div>
+          <div class="stat-change positive">+36% ↑</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Total Product</div>
-            <div class="stat-value">1,500</div>
-            <div class="stat-change negative">+14% ↑</div>
+          <div class="stat-label">Total Product</div>
+          <div class="stat-value">1,500</div>
+          <div class="stat-change negative">+14% ↑</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Total Invoice</div>
-            <div class="stat-value">84,382</div>
-            <div class="stat-change positive">+36% ↑</div>
+          <div class="stat-label">Total Invoice</div>
+          <div class="stat-value">84,382</div>
+          <div class="stat-change positive">+36% ↑</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Total User</div>
-            <div class="stat-value">33,493</div>
-            <div class="stat-change positive">+36% ↑</div>
+          <div class="stat-label">Total User</div>
+          <div class="stat-value">33,493</div>
+          <div class="stat-change positive">+36% ↑</div>
         </div>
-    </div>
+      </div>
 
-    <!-- Content Grid -->
-    <div class="content-grid">
+      <!-- Content Grid -->
+      <div class="content-grid">
         <!-- Sales Report Chart -->
         <div class="chart-section">
-            <div class="chart-header">
-                <h3 class="chart-title">Sales Report</h3>
-                <div style="display: flex; gap: 20px; align-items: center;">
-                    <div class="chart-filters">
-                        <button class="filter-btn active">12 Months</button>
-                        <button class="filter-btn">6 Months</button>
-                        <button class="filter-btn">30 Days</button>
-                        <button class="filter-btn">7 Days</button>
-                    </div>
-                    <button class="export-btn">📄 Export PDF</button>
-                </div>
+          <div class="chart-header">
+            <h3 class="chart-title">Sales Report</h3>
+            <div style="display: flex; gap: 20px; align-items: center">
+              <div class="chart-filters">
+                <button class="filter-btn active">12 Months</button>
+                <button class="filter-btn">6 Months</button>
+                <button class="filter-btn">30 Days</button>
+                <button class="filter-btn">7 Days</button>
+              </div>
+              <button class="export-btn">📄 Export PDF</button>
             </div>
-            <div class="chart-container">
-                <canvas id="salesChart"></canvas>
-            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="salesChart"></canvas>
+          </div>
         </div>
 
         <!-- Traffic Sources -->
         <div class="traffic-section">
-            <div class="traffic-header">
-                <h3 class="traffic-title">Traffic Sources</h3>
-                <span class="traffic-filter">Last 7 Days ▼</span>
+          <div class="traffic-header">
+            <h3 class="traffic-title">Traffic Sources</h3>
+            <span class="traffic-filter">Last 7 Days ▼</span>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">
+              <div class="traffic-bar direct"></div>
+              <span>Direct</span>
             </div>
-            <div class="traffic-item">
-                <div class="traffic-source">
-                    <div class="traffic-bar direct"></div>
-                    <span>Direct</span>
-                </div>
-                <div class="traffic-value">1,43,382</div>
+            <div class="traffic-value">1,43,382</div>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">
+              <div class="traffic-bar referral"></div>
+              <span>Referral</span>
             </div>
-            <div class="traffic-item">
-                <div class="traffic-source">
-                    <div class="traffic-bar referral"></div>
-                    <span>Referral</span>
-                </div>
-                <div class="traffic-value">87,974</div>
+            <div class="traffic-value">87,974</div>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">
+              <div class="traffic-bar social"></div>
+              <span>Social Media</span>
             </div>
-            <div class="traffic-item">
-                <div class="traffic-source">
-                    <div class="traffic-bar social"></div>
-                    <span>Social Media</span>
-                </div>
-                <div class="traffic-value">45,211</div>
+            <div class="traffic-value">45,211</div>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">
+              <div class="traffic-bar twitter"></div>
+              <span>Twitter</span>
             </div>
-            <div class="traffic-item">
-                <div class="traffic-source">
-                    <div class="traffic-bar twitter"></div>
-                    <span>Twitter</span>
-                </div>
-                <div class="traffic-value">21,893</div>
-            </div>
+            <div class="traffic-value">21,893</div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <!-- Bottom Grid -->
-    <div class="bottom-grid">
+      <!-- Bottom Grid -->
+      <div class="bottom-grid">
         <!-- Transactions -->
         <div class="transactions-section">
-            <div class="transactions-header">
-                <h3 class="transactions-title">Transactions</h3>
-                <a href="#" class="see-all-link">See All Transactions →</a>
+          <div class="transactions-header">
+            <h3 class="transactions-title">Transactions</h3>
+            <a href="#" class="see-all-link">See All Transactions →</a>
+          </div>
+          <div class="transaction-item">
+            <div class="transaction-status completed"></div>
+            <div class="transaction-details">
+              <div class="transaction-method">Visa card ****4831</div>
+              <div class="transaction-type">Card payment</div>
             </div>
-            <div class="transaction-item">
-                <div class="transaction-status completed"></div>
-                <div class="transaction-details">
-                    <div class="transaction-method">Visa card ****4831</div>
-                    <div class="transaction-type">Card payment</div>
-                </div>
-                <div>
-                    <div class="transaction-amount">$182.94</div>
-                    <div class="transaction-date">Jan 17, 2022</div>
-                </div>
-                <div class="transaction-company">Amazon</div>
+            <div>
+              <div class="transaction-amount">$182.94</div>
+              <div class="transaction-date">Jan 17, 2022</div>
             </div>
-            <div class="transaction-item">
-                <div class="transaction-status completed"></div>
-                <div class="transaction-details">
-                    <div class="transaction-method">Mastercard ****6442</div>
-                    <div class="transaction-type">Card payment</div>
-                </div>
-                <div>
-                    <div class="transaction-amount">$99.00</div>
-                    <div class="transaction-date">Jan 17, 2022</div>
-                </div>
-                <div class="transaction-company">Facebook</div>
+            <div class="transaction-company">Amazon</div>
+          </div>
+          <div class="transaction-item">
+            <div class="transaction-status completed"></div>
+            <div class="transaction-details">
+              <div class="transaction-method">Mastercard ****6442</div>
+              <div class="transaction-type">Card payment</div>
             </div>
-            <div class="transaction-item">
-                <div class="transaction-status pending"></div>
-                <div class="transaction-details">
-                    <div class="transaction-method">Account ****882</div>
-                    <div class="transaction-type">Bank payment</div>
-                </div>
-                <div>
-                    <div class="transaction-amount">$249.94</div>
-                    <div class="transaction-date">Jan 17, 2022</div>
-                </div>
-                <div class="transaction-company">Netflix</div>
+            <div>
+              <div class="transaction-amount">$99.00</div>
+              <div class="transaction-date">Jan 17, 2022</div>
             </div>
-            <div class="transaction-item">
-                <div class="transaction-status canceled"></div>
-                <div class="transaction-details">
-                    <div class="transaction-method">Amex card ****5666</div>
-                    <div class="transaction-type">Card payment</div>
-                </div>
-                <div>
-                    <div class="transaction-amount">$199.24</div>
-                    <div class="transaction-date">Jan 17, 2022</div>
-                </div>
-                <div class="transaction-company">Amazon Prime</div>
+            <div class="transaction-company">Facebook</div>
+          </div>
+          <div class="transaction-item">
+            <div class="transaction-status pending"></div>
+            <div class="transaction-details">
+              <div class="transaction-method">Account ****882</div>
+              <div class="transaction-type">Bank payment</div>
             </div>
+            <div>
+              <div class="transaction-amount">$249.94</div>
+              <div class="transaction-date">Jan 17, 2022</div>
+            </div>
+            <div class="transaction-company">Netflix</div>
+          </div>
+          <div class="transaction-item">
+            <div class="transaction-status canceled"></div>
+            <div class="transaction-details">
+              <div class="transaction-method">Amex card ****5666</div>
+              <div class="transaction-type">Card payment</div>
+            </div>
+            <div>
+              <div class="transaction-amount">$199.24</div>
+              <div class="transaction-date">Jan 17, 2022</div>
+            </div>
+            <div class="transaction-company">Amazon Prime</div>
+          </div>
         </div>
 
         <!-- Recent Customers -->
         <div class="customers-section">
-            <h3 class="customers-title">Recent Customers</h3>
-            <div class="customer-item">
-                <div class="customer-avatar">JW</div>
-                <div class="customer-info">
-                    <div class="customer-name">Jenny Wilson</div>
-                    <div class="customer-email">w.lawson@example.com</div>
-                </div>
-                <div class="customer-details">
-                    <div class="customer-amount">$11,234</div>
-                    <div class="customer-location">Austin</div>
-                </div>
+          <h3 class="customers-title">Recent Customers</h3>
+          <div class="customer-item">
+            <div class="customer-avatar">JW</div>
+            <div class="customer-info">
+              <div class="customer-name">Jenny Wilson</div>
+              <div class="customer-email">w.lawson@example.com</div>
             </div>
-            <div class="customer-item">
-                <div class="customer-avatar">DL</div>
-                <div class="customer-info">
-                    <div class="customer-name">Devon Lane</div>
-                    <div class="customer-email">dat.roberts@example.com</div>
-                </div>
-                <div class="customer-details">
-                    <div class="customer-amount">$11,159</div>
-                    <div class="customer-location">New York</div>
-                </div>
+            <div class="customer-details">
+              <div class="customer-amount">$11,234</div>
+              <div class="customer-location">Austin</div>
             </div>
-            <div class="customer-item">
-                <div class="customer-avatar">JC</div>
-                <div class="customer-info">
-                    <div class="customer-name">Jane Cooper</div>
-                    <div class="customer-email">jgraham@example.com</div>
-                </div>
-                <div class="customer-details">
-                    <div class="customer-amount">$10,483</div>
-                    <div class="customer-location">Toledo</div>
-                </div>
+          </div>
+          <div class="customer-item">
+            <div class="customer-avatar">DL</div>
+            <div class="customer-info">
+              <div class="customer-name">Devon Lane</div>
+              <div class="customer-email">dat.roberts@example.com</div>
             </div>
-            <div class="customer-item">
-                <div class="customer-avatar">DR</div>
-                <div class="customer-info">
-                    <div class="customer-name">Dianne Russell</div>
-                    <div class="customer-email">curtis.d@example.com</div>
-                </div>
-                <div class="customer-details">
-                    <div class="customer-amount">$9,084</div>
-                    <div class="customer-location">Naperville</div>
-                </div>
+            <div class="customer-details">
+              <div class="customer-amount">$11,159</div>
+              <div class="customer-location">New York</div>
             </div>
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="#" class="see-all-link">SEE ALL CUSTOMERS →</a>
+          </div>
+          <div class="customer-item">
+            <div class="customer-avatar">JC</div>
+            <div class="customer-info">
+              <div class="customer-name">Jane Cooper</div>
+              <div class="customer-email">jgraham@example.com</div>
             </div>
+            <div class="customer-details">
+              <div class="customer-amount">$10,483</div>
+              <div class="customer-location">Toledo</div>
+            </div>
+          </div>
+          <div class="customer-item">
+            <div class="customer-avatar">DR</div>
+            <div class="customer-info">
+              <div class="customer-name">Dianne Russell</div>
+              <div class="customer-email">curtis.d@example.com</div>
+            </div>
+            <div class="customer-details">
+              <div class="customer-amount">$9,084</div>
+              <div class="customer-location">Naperville</div>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 20px">
+            <a href="#" class="see-all-link">SEE ALL CUSTOMERS →</a>
+          </div>
         </div>
-    </div>
-</main>
-</body>
+      </div>
+    </main>
+  </body>
 </html>
 <script>
-    const ctx = document.getElementById('salesChart').getContext('2d');
-    const salesChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
-            datasets: [{
-                label: 'Sales',
-                data: [10000, 12000, 15000, 20000, 45591, 35000, 40000, 42000, 46000, 47000, 49000, 50000],
-                fill: true,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                tension: 0.4, // bo góc mượt như sóng
-                pointRadius: 5,
-                pointHoverRadius: 8
-            }]
+  const ctx = document.getElementById("salesChart").getContext("2d");
+  const salesChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: [
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+        "Jan",
+      ],
+      datasets: [
+        {
+          label: "Sales",
+          data: [
+            10000, 12000, 15000, 20000, 45591, 35000, 40000, 42000, 46000,
+            47000, 49000, 50000,
+          ],
+          fill: true,
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          tension: 0.4, // bo góc mượt như sóng
+          pointRadius: 5,
+          pointHoverRadius: 8,
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
 </script>
