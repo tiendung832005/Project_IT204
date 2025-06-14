@@ -1,455 +1,534 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mobile SHOP - Product</title>
-  <link rel="stylesheet" href="/css/product.css" />
-  <link rel="stylesheet" href="/css/dashboard.css" />
-</head>
-<body>
-<!-- Header -->
-<header class="header">
-  <div class="logo">Mobile <span class="shop-text">SHOP</span></div>
-</header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mobile SHOP - Product</title>
+    <link rel="stylesheet" href="/css/product.css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">Mobile <span class="shop-text">SHOP</span></div>
+    </header>
 
-<!-- Sidebar -->
-<aside class="sidebar">
-  <nav>
-    <ul class="sidebar-menu">
-      <li>
-        <a href="/admin/dashboard"><span class="icon">📊</span> Dashboard</a>
-      </li>
-      <li>
-        <a href="#"><span class="icon">👥</span> Customer</a>
-      </li>
-      <li>
-        <a href="/admin/product" class="active"><span class="icon">📱</span> Products</a>
-      </li>
-      <li>
-        <a href="#"><span class="icon">📄</span> Invoices</a>
-      </li>
-    </ul>
-  </nav>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav>
+        <ul class="sidebar-menu">
+          <li>
+            <a href="/admin/dashboard"
+              ><span class="icon">📊</span> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="#"><span class="icon">👥</span> Customer</a>
+          </li>
+          <li>
+            <a href="/admin/product" class="active"
+              ><span class="icon">📱</span> Products</a
+            >
+          </li>
+          <li>
+            <a href="#"><span class="icon">📄</span> Invoices</a>
+          </li>
+        </ul>
+      </nav>
 
-  <div class="sign-out">
-    <a href="/admin/logout"><span class="icon">🚪</span> Sign out</a>
-  </div>
-</aside>
+      <div class="sign-out">
+        <a href="/admin/logout"><span class="icon">🚪</span> Sign out</a>
+      </div>
+    </aside>
 
-<!-- Main Content -->
-<main class="main-content">
-  <!-- Thông báo -->
-  <div th:if="${message}" class="alert alert-success" style="color: green; margin-bottom: 10px;">
-    <span th:text="${message}"></span>
-  </div>
-  <div th:if="${error}" class="alert alert-danger" style="color: red; margin-bottom: 10px;">
-    <span th:text="${error}"></span>
-  </div>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Thông báo -->
+      <div
+        th:if="${message}"
+        class="alert alert-success"
+        style="color: green; margin-bottom: 10px"
+      >
+        <span th:text="${message}"></span>
+      </div>
+      <div
+        th:if="${error}"
+        class="alert alert-danger"
+        style="color: red; margin-bottom: 10px"
+      >
+        <span th:text="${error}"></span>
+      </div>
 
-  <div class="products-section">
-    <div class="products-header">
-      <h3 class="products-title">Product Management</h3>
-    </div>
-    <div class="top-controls">
-      <button class="add-product-btn">+ Add Product</button>
-      <form class="search-box" th:action="@{/admin/product}" method="get">
-        <input
-                type="text"
-                name="search"
-                th:value="${search}"
-                placeholder="Search by brand..."
-        />
-        <button type="submit" class="search-btn">🔍</button>
-      </form>
-    </div>
-
-    <table class="product-table">
-      <thead>
-      <tr>
-        <th>STT</th>
-        <th>Name</th>
-        <th>Brand</th>
-        <th>Image</th>
-        <th>Price</th>
-        <th>Stock</th>
-        <th>Action</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="product, stat : ${products}">
-        <td th:text="${stat.count + (currentPage - 1) * 10}">1</td>
-        <td th:text="${product.name}">iPhone 15 Pro Max</td>
-        <td th:text="${product.brand}">Apple</td>
-        <td><img class="product-img" th:src="${product.image}" alt="product"></td>
-        <td th:text="${'$' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">$1,199</td>
-        <td th:text="${product.stock}">35</td>
-        <td>
-          <!-- Form xóa sản phẩm -->
-          <form th:action="@{/admin/product/delete/{id}(id=${product.id})}" method="post" style="display: inline;">
-            <button type="submit" class="delete-btn" onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">🗑️</button>
+      <div class="products-section">
+        <div class="products-header">
+          <h3 class="products-title">Product Management</h3>
+        </div>
+        <div class="top-controls">
+          <button class="add-product-btn">+ Add Product</button>
+          <form class="search-box" th:action="@{/admin/product}" method="get">
+            <input
+              type="text"
+              name="search"
+              th:value="${search}"
+              placeholder="Search by brand..."
+              class="search-input"
+            />
+            <input
+              type="text"
+              name="minPrice"
+              th:value="${minPrice}"
+              placeholder="Min price"
+              class="price-input"
+            />
+            <input
+              type="text"
+              name="maxPrice"
+              th:value="${maxPrice}"
+              placeholder="Max price"
+              class="price-input"
+            />
+            <input
+              type="number"
+              th:value="${stock}"
+              placeholder="Stock availability"
+              class="stock-input"
+            />
+            <button type="submit" class="search-btn">🔍</button>
           </form>
-          <button
+        </div>
+
+        <table class="product-table">
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Name</th>
+              <th>Brand</th>
+              <th>Image</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="product, stat : ${products}">
+              <td th:text="${stat.count + (currentPage - 1) * 10}">1</td>
+              <td th:text="${product.name}">iPhone 15 Pro Max</td>
+              <td th:text="${product.brand}">Apple</td>
+              <td>
+                <img
+                  class="product-img"
+                  th:src="${product.image}"
+                  alt="product"
+                />
+              </td>
+              <td
+                th:text="${'$' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}"
+              >
+                $1,199
+              </td>
+              <td th:text="${product.stock}">35</td>
+              <td>
+                <!-- Form xóa sản phẩm -->
+                <form
+                  th:action="@{/admin/product/delete/{id}(id=${product.id})}"
+                  method="post"
+                  style="display: inline"
+                >
+                  <button
+                    type="submit"
+                    class="delete-btn"
+                    onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')"
+                  >
+                    🗑️
+                  </button>
+                </form>
+                <button
                   class="edit-btn"
                   th:attr="data-id=${product.id}, data-name=${product.name}, data-brand=${product.brand}, data-price=${product.price}, data-stock=${product.stock}, data-image=${product.image}"
-          >✏️</button>
+                >
+                  ✏️
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="bottom-pagination">
+          <div class="pagination">
+            <a
+              th:href="@{/admin/product(page=${currentPage - 1}, search=${search})}"
+              th:class="${currentPage == 1} ? 'page-btn disabled' : 'page-btn'"
+              >«</a
+            >
 
-        </td>
-      </tr>
-      </tbody>
-    </table>
-    <div class="bottom-pagination">
-      <div class="pagination">
-        <a
-                th:href="@{/admin/product(page=${currentPage - 1}, search=${search})}"
-                th:class="${currentPage == 1} ? 'page-btn disabled' : 'page-btn'"
-        >«</a
-        >
+            <a
+              th:each="i : ${#numbers.sequence(1, totalPages)}"
+              th:href="@{/admin/product(page=${i}, search=${search})}"
+              th:text="${i}"
+              th:class="${currentPage == i} ? 'page-btn active' : 'page-btn'"
+              >1</a
+            >
 
-        <a
-                th:each="i : ${#numbers.sequence(1, totalPages)}"
-                th:href="@{/admin/product(page=${i}, search=${search})}"
-                th:text="${i}"
-                th:class="${currentPage == i} ? 'page-btn active' : 'page-btn'"
-        >1</a
-        >
+            <a
+              th:href="@{/admin/product(page=${currentPage + 1}, search=${search})}"
+              th:class="${currentPage == totalPages} ? 'page-btn disabled' : 'page-btn'"
+              >»</a
+            >
+          </div>
+        </div>
+      </div>
+    </main>
 
-        <a
-                th:href="@{/admin/product(page=${currentPage + 1}, search=${search})}"
-                th:class="${currentPage == totalPages} ? 'page-btn disabled' : 'page-btn'"
-        >»</a
+    <!-- Add Product Modal -->
+    <div id="addProductModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add Product</h2>
+        <form
+          id="addProductForm"
+          th:action="@{/admin/product/add}"
+          method="post"
+          enctype="multipart/form-data"
         >
+          <div class="form-group">
+            <label for="name">Name<span>*</span></label>
+            <input type="text" id="name" name="name" />
+            <div id="nameError" class="error-message"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="brand">Brand<span>*</span></label>
+            <input type="text" id="brand" name="brand" />
+            <div id="brandError" class="error-message"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="price">Price<span>*</span></label>
+            <input type="number" step="0.01" id="price" name="price" />
+            <div id="priceError" class="error-message"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="image">Image<span>*</span></label>
+            <div class="upload-box">
+              <input type="file" id="image" name="image" />
+              <span class="upload-icon">⬆️ Upload</span>
+              <div id="imgError" class="error-message"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="stock">Stock<span>*</span></label>
+            <input type="number" id="stock" name="stock" />
+            <div id="stockError" class="error-message"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="cancel-btn">Cancel</button>
+            <button type="submit" class="save-btn">Save</button>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
-</main>
 
-<!-- Add Product Modal -->
-<div id="addProductModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>Add Product</h2>
-    <form id="addProductForm" th:action="@{/admin/product/add}" method="post" enctype="multipart/form-data">
-      <div class="form-group">
-        <label for="name">Name<span>*</span></label>
-        <input type="text" id="name" name="name" />
-        <div id="nameError" class="error-message"></div>
+    <!-- Edit Product Modal -->
+    <div id="editProductModal" class="modal">
+      <div class="modal-content">
+        <span class="close-edit">&times;</span>
+        <h2>Edit Product</h2>
+        <form
+          id="editProductForm"
+          th:action="@{/admin/product/edit}"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <input type="hidden" id="edit-id" name="id" />
+
+          <div class="form-group">
+            <label for="edit-name">Name<span>*</span></label>
+            <input type="text" id="edit-name" name="name" />
+            <div id="name1Error" class="error-message"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-brand">Brand<span>*</span></label>
+            <input type="text" id="edit-brand" name="brand" />
+            <div id="brand1Error" class="error-message"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-price">Price<span>*</span></label>
+            <input type="number" step="0.01" id="edit-price" name="price" />
+            <div id="price1Error" class="error-message"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-image">Image<span>*</span></label>
+            <div class="upload-box">
+              <input type="file" id="edit-image" name="image" />
+              <span class="upload-icon">⬆️ Upload</span>
+            </div>
+            <div id="image1Error" class="error-message"></div>
+            <!-- Hiển thị ảnh cũ -->
+            <div id="currentImage" style="margin-top: 10px">
+              <img
+                id="currentImagePreview"
+                src="#"
+                alt="Current Image"
+                style="width: 100px; height: 100px; object-fit: cover"
+              />
+              <button
+                type="button"
+                id="deleteImageBtn"
+                style="
+                  color: red;
+                  border: none;
+                  background: none;
+                  font-size: 18px;
+                "
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-stock">Stock<span>*</span></label>
+            <input type="number" id="edit-stock" name="stock" />
+            <div id="stock1Error" class="error-message"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="cancel-edit-btn">Cancel</button>
+            <button type="submit" class="save-btn">Save</button>
+          </div>
+        </form>
       </div>
+    </div>
 
-      <div class="form-group">
-        <label for="brand">Brand<span>*</span></label>
-        <input type="text" id="brand" name="brand" />
-        <div id="brandError" class="error-message"></div>
-      </div>
+    <script>
+      const modal = document.getElementById("addProductModal");
+      const openBtn = document.querySelector(".add-product-btn");
+      const closeBtn = document.querySelector(".close");
+      const cancelBtn = document.querySelector(".cancel-btn");
 
-      <div class="form-group">
-        <label for="price">Price<span>*</span></label>
-        <input type="number" step="0.01" id="price" name="price" />
-        <div id="priceError" class="error-message"></div>
-      </div>
+      openBtn.onclick = () => (modal.style.display = "block");
+      closeBtn.onclick = () => (modal.style.display = "none");
+      cancelBtn.onclick = () => (modal.style.display = "none");
 
-      <div class="form-group">
-        <label for="image">Image<span>*</span></label>
-        <div class="upload-box">
-          <input type="file" id="image" name="image"  />
-          <span class="upload-icon">⬆️ Upload</span>
-          <div id="imgError" class="error-message"></div>
-        </div>
-      </div>
+      // form add
+      const form = document.getElementById("addProductForm");
 
-      <div class="form-group">
-        <label for="stock">Stock<span>*</span></label>
-        <input type="number" id="stock" name="stock" />
-        <div id="stockError" class="error-message"></div>
-      </div>
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-      <div class="form-actions">
-        <button type="button" class="cancel-btn">Cancel</button>
-        <button type="submit" class="save-btn">Save</button>
-      </div>
-    </form>
-  </div>
-</div>
+        let isValid = true;
+        clearErrors();
 
-<!-- Edit Product Modal -->
-<div id="editProductModal" class="modal">
-  <div class="modal-content">
-    <span class="close-edit">&times;</span>
-    <h2>Edit Product</h2>
-    <form id="editProductForm" th:action="@{/admin/product/edit}" method="post" enctype="multipart/form-data">
-      <input type="hidden" id="edit-id" name="id" />
+        const name = form.name.value.trim();
+        const brand = form.brand.value.trim();
+        const price = form.price.value.trim();
+        const stock = form.stock.value.trim();
+        const image = form.image.files[0];
 
-      <div class="form-group">
-        <label for="edit-name">Name<span>*</span></label>
-        <input type="text" id="edit-name" name="name" />
-        <div id="name1Error" class="error-message"></div>
-      </div>
+        if (name === "") {
+          showError("name", "Hãy nhập vào tên sản phẩm ...");
+          isValid = false;
+        }
 
-      <div class="form-group">
-        <label for="edit-brand">Brand<span>*</span></label>
-        <input type="text" id="edit-brand" name="brand" />
-        <div id="brand1Error" class="error-message"></div>
-      </div>
+        if (brand === "") {
+          showError("brand", "Hãy nhập vào nhãn hiệu ...");
+          isValid = false;
+        }
 
-      <div class="form-group">
-        <label for="edit-price">Price<span>*</span></label>
-        <input type="number" step="0.01" id="edit-price" name="price" />
-        <div id="price1Error" class="error-message"></div>
-      </div>
+        if (price === "" || parseFloat(price) <= 0) {
+          showError("price", "Giá phải lớn hơn 0...");
+          isValid = false;
+        }
 
-      <div class="form-group">
-        <label for="edit-image">Image<span>*</span></label>
-        <div class="upload-box">
-          <input type="file" id="edit-image" name="image"/>
-          <span class="upload-icon">⬆️ Upload</span>
-        </div>
-        <div id="image1Error" class="error-message"></div>
-        <!-- Hiển thị ảnh cũ -->
-        <div id="currentImage" style="margin-top: 10px;">
-          <img id="currentImagePreview" src="#" alt="Current Image" style="width: 100px; height: 100px; object-fit: cover;">
-          <button type="button" id="deleteImageBtn" style="color:red; border:none; background:none; font-size:18px;">🗑️</button>
-        </div>
-      </div>
+        if (stock === "" || parseInt(stock) < 0) {
+          showError("stock", "Số lượng phải lớn hơn 0 ...");
+          isValid = false;
+        }
 
-      <div class="form-group">
-        <label for="edit-stock">Stock<span>*</span></label>
-        <input type="number" id="edit-stock" name="stock" />
-        <div id="stock1Error" class="error-message"></div>
-      </div>
+        if (!image) {
+          showError("image", "Hãy upload ảnh ...");
+          isValid = false;
+        }
 
-      <div class="form-actions">
-        <button type="button" class="cancel-edit-btn">Cancel</button>
-        <button type="submit" class="save-btn">Save</button>
-      </div>
-    </form>
-  </div>
-</div>
+        if (name !== "") {
+          fetch(`/admin/product/check-name?name=${encodeURIComponent(name)}`)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.exists) {
+                showError("name", "Tên sản phẩm đã tồn tại!");
+                isValid = false;
+              }
 
-<script>
+              if (isValid) {
+                form.submit();
+              }
+            });
+        } else if (isValid) {
+          form.submit();
+        }
+      });
 
-  const modal = document.getElementById("addProductModal");
-  const openBtn = document.querySelector(".add-product-btn");
-  const closeBtn = document.querySelector(".close");
-  const cancelBtn = document.querySelector(".cancel-btn");
-
-  openBtn.onclick = () => modal.style.display = "block";
-  closeBtn.onclick = () => modal.style.display = "none";
-  cancelBtn.onclick = () => modal.style.display = "none";
-
-  window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  }
-
-  // form add
-  const form = document.getElementById("addProductForm");
-
-  form.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    let isValid = true;
-    clearErrors();
-
-    const name = form.name.value.trim();
-    const brand = form.brand.value.trim();
-    const price = form.price.value.trim();
-    const stock = form.stock.value.trim();
-    const image = form.image.files[0];
-
-    if (name === "") {
-      showError("name", "Hãy nhập vào tên sản phẩm ...");
-      isValid = false;
-    }
-
-    if (brand === "") {
-      showError("brand", "Hãy nhập vào nhãn hiệu ...");
-      isValid = false;
-    }
-
-    if (price === "" || parseFloat(price) <= 0) {
-      showError("price", "Giá phải lớn hơn 0...");
-      isValid = false;
-    }
-
-    if (stock === "" || parseInt(stock) < 0) {
-      showError("stock", "Số lượng phải lớn hơn 0 ...");
-      isValid = false;
-    }
-
-    if (!image) {
-      showError("image", "Hãy upload ảnh ...");
-      isValid = false;
-    }
-
-    if (name !== "") {
-      fetch(`/admin/product/check-name?name=${encodeURIComponent(name)}`)
-              .then(response => response.json())
-              .then(data => {
-                if (data.exists) {
-                  showError("name", "Tên sản phẩm đã tồn tại!");
-                  isValid = false;
-                }
-
-                if (isValid) {
-                  form.submit();
-                }
-              });
-    } else if (isValid) {
-      form.submit();
-    }
-  });
-
-  function showError(fieldId, message) {
-    const group = document.getElementById(fieldId).closest(".form-group");
-    group.classList.add("error");
-    const errorEl = document.getElementById(fieldId + "Error");
-    if (errorEl) {
-      errorEl.textContent = message;
-      errorEl.style.display = "block";
-    }
-  }
-
-  function clearErrors() {
-    document.querySelectorAll(".form-group").forEach(group => {
-      group.classList.remove("error");
-      const errorMsg = group.querySelector(".error-message");
-      if (errorMsg) {
-        errorMsg.textContent = "";
-        errorMsg.style.display = "none";
+      function showError(fieldId, message) {
+        const group = document.getElementById(fieldId).closest(".form-group");
+        group.classList.add("error");
+        const errorEl = document.getElementById(fieldId + "Error");
+        if (errorEl) {
+          errorEl.textContent = message;
+          errorEl.style.display = "block";
+        }
       }
-    });
-  }
-  // Lấy các elements cần thiết
-  const editModal = document.getElementById("editProductModal");
-  const editCloseBtn = document.querySelector(".close-edit");
-  const cancelEditBtn = document.querySelector(".cancel-edit-btn");
-  const editBtns = document.querySelectorAll(".edit-btn");
 
-  // Xử lý sự kiện click vào nút edit
-  editBtns.forEach(btn => {
-    btn.onclick = function() {
-      // Lấy data từ data attributes
-      const id = this.getAttribute("data-id");
-      const name = this.getAttribute("data-name");
-      const brand = this.getAttribute("data-brand");
-      const price = this.getAttribute("data-price");
-      const stock = this.getAttribute("data-stock");
-      const image = this.getAttribute("data-image");
-
-      // Điền data vào form
-      document.getElementById("edit-id").value = id;
-      document.getElementById("edit-name").value = name;
-      document.getElementById("edit-brand").value = brand;
-      document.getElementById("edit-price").value = price;
-      document.getElementById("edit-stock").value = stock;
-      document.getElementById("currentImagePreview").src = image;
-
-      // Hiển thị modal
-      editModal.style.display = "block";
-    }
-  });
-
-  // Đóng modal khi click nút close
-  editCloseBtn.onclick = function() {
-    editModal.style.display = "none";
-  }
-
-  // Đóng modal khi click nút cancel
-  cancelEditBtn.onclick = function() {
-    editModal.style.display = "none";
-  }
-
-  // Đóng modal khi click bên ngoài
-  window.onclick = function(event) {
-    if (event.target == editModal) {
-      editModal.style.display = "none";
-    }
-  }
-
-
-  // form edit
-  const editForm = document.getElementById("editProductForm");
-
-  editForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    let isValid = true;
-    clearEditErrors();
-
-    const name = editForm.name.value.trim();
-    const brand = editForm.brand.value.trim();
-    const price = editForm.price.value.trim();
-    const stock = editForm.stock.value.trim();
-    const image = editForm.image.files[0];
-    const id = editForm.id.value;
-
-    // Validate name
-    if (name === "") {
-      showEditError("name", "Hãy nhập vào tên sản phẩm ...");
-      isValid = false;
-    }
-
-    // Validate brand
-    if (brand === "") {
-      showEditError("brand", "Hãy nhập vào nhãn hiệu ...");
-      isValid = false;
-    }
-
-    if (price === "" || parseFloat(price) <= 0) {
-      showEditError("price", "Giá phải lớn hơn 0...");
-      isValid = false;
-    }
-
-    if (stock === "" || parseInt(stock) < 0) {
-      showEditError("stock", "Số lượng phải lớn hơn 0 ...");
-      isValid = false;
-    }
-
-    // AJAX
-    if (name !== "") {
-      fetch(`/admin/product/check-name?name=${encodeURIComponent(name)}&id=${id}`)
-              .then(response => response.json())
-              .then(data => {
-                if (data.exists) {
-                  showEditError("name", "Tên sản phẩm đã tồn tại!");
-                  isValid = false;
-                }
-
-                if (isValid) {
-                  editForm.submit();
-                }
-              });
-    } else if (isValid) {
-      editForm.submit();
-    }
-  });
-
-  function showEditError(fieldId, message) {
-    const group = document.getElementById("edit-" + fieldId).closest(".form-group");
-    group.classList.add("error");
-    const errorEl = document.getElementById(fieldId + "1Error");
-    if (errorEl) {
-      errorEl.textContent = message;
-      errorEl.style.display = "block";
-    }
-  }
-
-  function clearEditErrors() {
-    document.querySelectorAll("#editProductModal .form-group").forEach(group => {
-      group.classList.remove("error");
-      const errorMsg = group.querySelector(".error-message");
-      if (errorMsg) {
-        errorMsg.textContent = "";
-        errorMsg.style.display = "none";
+      function clearErrors() {
+        document.querySelectorAll(".form-group").forEach((group) => {
+          group.classList.remove("error");
+          const errorMsg = group.querySelector(".error-message");
+          if (errorMsg) {
+            errorMsg.textContent = "";
+            errorMsg.style.display = "none";
+          }
+        });
       }
-    });
-  }
 
-  // Đóng modal
-  editCloseBtn.onclick = () => editModal.style.display = "none";
-  cancelEditBtn.onclick = () => editModal.style.display = "none";
+      // Lấy các elements cần thiết cho form edit
+      const editModal = document.getElementById("editProductModal");
+      const editCloseBtn = document.querySelector(".close-edit");
+      const cancelEditBtn = document.querySelector(".cancel-edit-btn");
+      const editBtns = document.querySelectorAll(".edit-btn");
 
-</script>
-</body>
+      // Xử lý sự kiện click vào nút edit
+      editBtns.forEach((btn) => {
+        btn.onclick = function () {
+          // Lấy data từ data attributes
+          const id = this.getAttribute("data-id");
+          const name = this.getAttribute("data-name");
+          const brand = this.getAttribute("data-brand");
+          const price = this.getAttribute("data-price");
+          const stock = this.getAttribute("data-stock");
+          const image = this.getAttribute("data-image");
+
+          // Điền data vào form
+          document.getElementById("edit-id").value = id;
+          document.getElementById("edit-name").value = name;
+          document.getElementById("edit-brand").value = brand;
+          document.getElementById("edit-price").value = price;
+          document.getElementById("edit-stock").value = stock;
+          document.getElementById("currentImagePreview").src = image;
+
+          // Hiển thị modal
+          editModal.style.display = "block";
+        };
+      });
+
+      // Đóng modal khi click nút close
+      editCloseBtn.onclick = function () {
+        editModal.style.display = "none";
+      };
+
+      // Đóng modal khi click nút cancel
+      cancelEditBtn.onclick = function () {
+        editModal.style.display = "none";
+      };
+
+      // form edit
+      const editForm = document.getElementById("editProductForm");
+
+      editForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        let isValid = true;
+        clearEditErrors();
+
+        const name = editForm.name.value.trim();
+        const brand = editForm.brand.value.trim();
+        const price = editForm.price.value.trim();
+        const stock = editForm.stock.value.trim();
+        const image = editForm.image.files[0];
+        const id = editForm.id.value;
+
+        // Validate name
+        if (name === "") {
+          showEditError("name", "Hãy nhập vào tên sản phẩm ...");
+          isValid = false;
+        }
+
+        // Validate brand
+        if (brand === "") {
+          showEditError("brand", "Hãy nhập vào nhãn hiệu ...");
+          isValid = false;
+        }
+
+        if (price === "" || parseFloat(price) <= 0) {
+          showEditError("price", "Giá phải lớn hơn 0...");
+          isValid = false;
+        }
+
+        if (stock === "" || parseInt(stock) < 0) {
+          showEditError("stock", "Số lượng phải lớn hơn 0 ...");
+          isValid = false;
+        }
+
+        // AJAX
+        if (name !== "") {
+          fetch(
+            `/admin/product/check-name?name=${encodeURIComponent(
+              name
+            )}&id=${id}`
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.exists) {
+                showEditError("name", "Tên sản phẩm đã tồn tại!");
+                isValid = false;
+              }
+
+              if (isValid) {
+                editForm.submit();
+              }
+            });
+        } else if (isValid) {
+          editForm.submit();
+        }
+      });
+
+      function showEditError(fieldId, message) {
+        const group = document
+          .getElementById("edit-" + fieldId)
+          .closest(".form-group");
+        group.classList.add("error");
+        const errorEl = document.getElementById(fieldId + "1Error");
+        if (errorEl) {
+          errorEl.textContent = message;
+          errorEl.style.display = "block";
+        }
+      }
+
+      function clearEditErrors() {
+        document
+          .querySelectorAll("#editProductModal .form-group")
+          .forEach((group) => {
+            group.classList.remove("error");
+            const errorMsg = group.querySelector(".error-message");
+            if (errorMsg) {
+              errorMsg.textContent = "";
+              errorMsg.style.display = "none";
+            }
+          });
+      }
+
+      // Xử lý click bên ngoài modal
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+        if (event.target == editModal) {
+          editModal.style.display = "none";
+        }
+      };
+    </script>
+  </body>
 </html>

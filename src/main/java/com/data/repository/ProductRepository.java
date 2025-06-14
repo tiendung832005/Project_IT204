@@ -1,5 +1,6 @@
 package com.data.repository;
 
+import com.data.dto.ProductDTO;
 import com.data.entity.Product;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,6 +9,8 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -44,7 +47,6 @@ public class ProductRepository {
         }
     }
 
-
     public long countTotalProducts() {
         Session session = null;
         Transaction transaction = null;
@@ -70,57 +72,104 @@ public class ProductRepository {
         }
     }
 
-    public List<Product> searchByBrand(String brand, int page, int size) {
+    public long countProducts(String search, Double minPrice, Double maxPrice, Integer stock) {
         Session session = null;
         Transaction transaction = null;
         try {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
 
-            Query<Product> query = session.createQuery("FROM Product WHERE LOWER(brand) LIKE LOWER(:brand)", Product.class);
-            query.setParameter("brand", "%" + brand + "%");
-            query.setFirstResult((page - 1) * size);
-            query.setMaxResults(size);
-            List<Product> products = query.list();
-
-            transaction.commit();
-            return products;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
+            String hql = "SELECT COUNT(*) FROM Product WHERE 1=1";
+            if (search != null && !search.trim().isEmpty()) {
+                hql += " AND LOWER(brand) LIKE :search";
             }
-            e.printStackTrace();
-            return null;
-        } finally {
-            if (session != null) {
-                session.close();
+            if (minPrice != null) {
+                hql += " AND price >= :minPrice";
             }
-        }
-    }
+            if (maxPrice != null) {
+                hql += " AND price <= :maxPrice";
+            }
+            if (stock != null) {
+                hql += " AND stock >= :stock";
+            }
 
-    public long countProductsByBrand(String brand) {
-        Session session = null;
-        Transaction transaction = null;
-        try {
-            session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
+            Query<Long> query = session.createQuery(hql, Long.class);
 
-            Query<Long> query = session.createQuery("SELECT COUNT(*) FROM Product WHERE LOWER(brand) LIKE LOWER(:brand)", Long.class);
-            query.setParameter("brand", "%" + brand + "%");
+            if (search != null && !search.trim().isEmpty()) {
+                query.setParameter("search", "%" + search.toLowerCase() + "%");
+            }
+            if (minPrice != null) {
+                query.setParameter("minPrice", minPrice);
+            }
+            if (maxPrice != null) {
+                query.setParameter("maxPrice", maxPrice);
+            }
+            if (stock != null) {
+                query.setParameter("stock", stock);
+            }
+
             Long count = query.uniqueResult();
-
             transaction.commit();
             return count != null ? count : 0;
+
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
             return 0;
         } finally {
-            if (session != null) {
-                session.close();
+            if (session != null) session.close();
+        }
+    }
+
+    public List<Product> searchProducts(String search, Double minPrice, Double maxPrice, Integer stock, int page, int size) {
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            String hql = "FROM Product WHERE 1=1";
+            if (search != null && !search.trim().isEmpty()) {
+                hql += " AND LOWER(brand) LIKE :search";
             }
+            if (minPrice != null) {
+                hql += " AND price >= :minPrice";
+            }
+            if (maxPrice != null) {
+                hql += " AND price <= :maxPrice";
+            }
+            if (stock != null) {
+                hql += " AND stock >= :stock";
+            }
+
+            Query<Product> query = session.createQuery(hql, Product.class);
+
+            if (search != null && !search.trim().isEmpty()) {
+                query.setParameter("search", "%" + search.toLowerCase() + "%");
+            }
+            if (minPrice != null) {
+                query.setParameter("minPrice", minPrice);
+            }
+            if (maxPrice != null) {
+                query.setParameter("maxPrice", maxPrice);
+            }
+            if (stock != null) {
+                query.setParameter("stock", stock);
+            }
+
+            query.setFirstResult((page - 1) * size);
+            query.setMaxResults(size);
+
+            List<Product> products = query.list();
+            transaction.commit();
+            return products;
+
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+            return Collections.emptyList();
+        } finally {
+            if (session != null) session.close();
         }
     }
 
@@ -232,8 +281,7 @@ public class ProductRepository {
 
             Query<Long> query = session.createQuery(
                     "SELECT COUNT(*) FROM Product WHERE name = :name AND id != :id",
-                    Long.class
-            );
+                    Long.class);
             query.setParameter("name", name);
             query.setParameter("id", id);
 
@@ -263,8 +311,7 @@ public class ProductRepository {
 
             Query<Long> query = session.createQuery(
                     "SELECT COUNT(*) FROM Product WHERE name = :name",
-                    Long.class
-            );
+                    Long.class);
             query.setParameter("name", name);
 
             Long count = query.uniqueResult();

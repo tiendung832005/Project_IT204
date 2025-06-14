@@ -1,6 +1,5 @@
 package com.data.dto;
 
-
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
@@ -26,11 +25,15 @@ public class ProductDTO {
     @PositiveOrZero(message = "Số lượng phải lớn hơn hoặc bằng 0!")
     private Integer stock;
 
+    @NotNull(message = "Vui lòng chọn ảnh sản phẩm!")
     private MultipartFile image;
     private String currentImage;
 
-    // Getters and Setters
+    // Constructor
+    public ProductDTO() {
+    }
 
+    // Getters and Setters
     public Integer getId() {
         return id;
     }

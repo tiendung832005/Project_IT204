@@ -19,23 +19,15 @@ public class Product {
     private Integer id;
 
     @Column(nullable = false, length = 100)
-    @NotBlank(message = "Tên sản phẩm không được để trống")
-    @Size(max = 100, message = "Tên sản phẩm không được quá 100 ký tự")
     private String name;
 
     @Column(nullable = false, length = 50)
-    @NotBlank(message = "Brand không được để trống")
-    @Size(max = 50, message = "Brand không được quá 50 ký tự")
     private String brand;
 
     @Column(nullable = false, precision = 12, scale = 2)
-    @NotNull(message = "Giá không được để trống")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Giá phải lớn hơn 0")
     private BigDecimal price;
 
     @Column(nullable = false)
-    @NotNull(message = "Stock không được để trống")
-    @Min(value = 1, message = "Số lượng tồn phải lớn hơn 0")
     private Integer stock;
     @Column(nullable = false, length = 255)
     private String image;
