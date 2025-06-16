@@ -34,8 +34,8 @@ public class ProductController {
     public String listProducts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(required = false) String search,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Integer stock,
             Model model) {
 

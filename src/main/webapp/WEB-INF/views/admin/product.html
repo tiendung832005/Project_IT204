@@ -23,7 +23,7 @@
             >
           </li>
           <li>
-            <a href="#"><span class="icon">👥</span> Customer</a>
+            <a href="/admin/customer"><span class="icon">👥</span> Customer</a>
           </li>
           <li>
             <a href="/admin/product" class="active"
@@ -31,7 +31,7 @@
             >
           </li>
           <li>
-            <a href="#"><span class="icon">📄</span> Invoices</a>
+            <a href="/admin/invoice"><span class="icon">📄</span> Invoices</a>
           </li>
         </ul>
       </nav>
@@ -74,21 +74,26 @@
               class="search-input"
             />
             <input
-              type="text"
+              type="number"
               name="minPrice"
               th:value="${minPrice}"
               placeholder="Min price"
               class="price-input"
+              step="0.01"
+              min="0"
             />
             <input
-              type="text"
+              type="number"
               name="maxPrice"
               th:value="${maxPrice}"
               placeholder="Max price"
               class="price-input"
+              step="0.01"
+              min="0"
             />
             <input
               type="number"
+              name="stock"
               th:value="${stock}"
               placeholder="Stock availability"
               class="stock-input"
@@ -308,8 +313,8 @@
     <script>
       const modal = document.getElementById("addProductModal");
       const openBtn = document.querySelector(".add-product-btn");
-      const closeBtn = document.querySelector(".close");
-      const cancelBtn = document.querySelector(".cancel-btn");
+      const closeBtn = addProductModal.querySelector(".close");
+      const cancelBtn = addProductModal.querySelector(".cancel-btn");
 
       openBtn.onclick = () => (modal.style.display = "block");
       closeBtn.onclick = () => (modal.style.display = "none");
@@ -529,6 +534,7 @@
           editModal.style.display = "none";
         }
       };
+
     </script>
   </body>
 </html>

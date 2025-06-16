@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoices Management</title>
+  <link rel="stylesheet" href="/css/invoice.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/product.css">
+
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="logo">Mobile <span class="shop-text">SHOP</span></div>
+</header>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <nav>
+    <ul class="sidebar-menu">
+      <li><a href="/admin/dashboard"><span class="icon">📊</span> Dashboard</a></li>
+      <li><a href="/admin/customer"><span class="icon">👥</span> Customer</a></li>
+      <li><a href="/admin/product"><span class="icon">📱</span> Products</a></li>
+      <li><a href="/admin/invoice" class="active"><span class="icon">📄</span> Invoices</a></li>
+    </ul>
+  </nav>
+
+  <div class="sign-out">
+    <a href="/admin/logout"><span class="icon">🚪</span> Sign out</a>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+  <div class="products-section">
+    <div class="products-header">
+      <h3 class="products-title">Invoices Management</h3>
+    </div>
+
+    <div class="top-controls">
+      <button class="add-invoice-btn">+ Add Invoice</button>
+      <form class="search-box" method="get" action="/admin/invoice">
+        <input type="text" name="search" placeholder="Search by customer name..." class="search-input"/>
+        <button type="submit" class="search-btn">🔍</button>
+      </form>
+    </div>
+
+    <table class="product-table">
+      <thead>
+      <tr>
+        <th>STT</th>
+        <th>Customer Name</th>
+        <th>Created At</th>
+        <th>Status</th>
+        <th>Total Amount</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- Sample row -->
+      <tr>
+        <td>1</td>
+        <td>Michael Ballack</td>
+        <td>20/10/2022</td>
+        <td><span class="status-badge pending">PENDING</span></td>
+        <td>1,200 $</td>
+        <td>
+          <button class="delete-btn">🗑️</button>
+          <button class="edit-btn">✏️</button>
+          <button class="view-btn">👁️</button>
+        </td>
+      </tr>
+      <!-- thêm nhiều row nếu cần -->
+      </tbody>
+    </table>
+
+    <div class="bottom-pagination">
+      <div class="pagination">
+        <a href="#" class="page-btn disabled">«</a>
+        <a href="#" class="page-btn active">1</a>
+        <a href="#" class="page-btn">2</a>
+        <a href="#" class="page-btn">3</a>
+        <a href="#" class="page-btn">»</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal Add Invoice -->
+
+</body>
+</html>

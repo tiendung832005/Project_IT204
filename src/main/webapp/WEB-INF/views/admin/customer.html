@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/customer.css" />
+    <link rel="stylesheet" href="/css/product.css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">Mobile <span class="shop-text">SHOP</span></div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav>
+        <ul class="sidebar-menu">
+          <li>
+            <a href="/admin/dashboard"
+              ><span class="icon">📊</span> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="/admin/customer" class="active"
+              ><span class="icon">👥</span> Customer</a
+            >
+          </li>
+          <li>
+            <a href="/admin/product"><span class="icon">📱</span> Products</a>
+          </li>
+          <li>
+            <a href="#"><span class="icon">📄</span> Invoices</a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sign-out">
+        <a href="/admin/logout"><span class="icon">🚪</span> Sign out</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Thông báo -->
+      <div th:if="${message}" class="alert alert-success">
+        <p th:text="${message}"></p>
+      </div>
+      <div th:if="${error}" class="alert alert-error">
+        <p th:text="${error}"></p>
+      </div>
+
+      <div class="products-section">
+        <div class="products-header">
+          <h3 class="products-title">Customer Management</h3>
+        </div>
+
+        <div class="top-controls">
+          <button class="add-product-btn">+ Add User</button>
+          <form class="search-box" method="get" action="/admin/customer">
+            <input
+              type="text"
+              name="search"
+              placeholder="Search by name or email..."
+              class="search-input"
+              th:value="${search}"
+            />
+            <button type="submit" class="search-btn">🔍</button>
+          </form>
+        </div>
+
+        <table class="product-table">
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Address</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="customer, stat : ${customers}">
+              <td th:text="${stat.count}"></td>
+              <td th:text="${customer.name}"></td>
+              <td th:text="${customer.email}"></td>
+              <td th:text="${customer.phone}"></td>
+              <td th:text="${customer.address}"></td>
+              <td>
+                <span
+                  th:if="${customer.status == 'Active'}"
+                  style="color: green"
+                  >● Active</span
+                >
+                <span
+                  th:if="${customer.status == 'Deactivate'}"
+                  style="color: red"
+                  >● Deactivate</span
+                >
+              </td>
+              <td>
+                <button class="edit-btn">✏️</button>
+                <button class="status-btn">🔒</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="bottom-pagination">
+          <div class="pagination">
+            <a
+              th:href="@{/admin/customer(page=${currentPage - 1}, search=${search})}"
+              th:class="${currentPage == 1} ? 'page-btn disabled' : 'page-btn'"
+              >«</a
+            >
+
+            <a
+              th:each="i : ${#numbers.sequence(1, totalPages)}"
+              th:href="@{/admin/customer(page=${i}, search=${search})}"
+              th:text="${i}"
+              th:class="${currentPage == i} ? 'page-btn active' : 'page-btn'"
+              >1</a
+            >
+
+            <a
+              th:href="@{/admin/customer(page=${currentPage + 1}, search=${search})}"
+              th:class="${currentPage == totalPages} ? 'page-btn disabled' : 'page-btn'"
+              >»</a
+            >
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Add Customer Modal -->
+    <div id="addCustomerModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add Customer</h2>
+        <form
+          id="addCustomerForm"
+          th:action="@{/admin/customer/add}"
+          th:object="${customerDTO}"
+          method="post"
+        >
+          <div class="form-group">
+            <label for="name">Name<span>*</span></label>
+            <input type="text" id="name" th:field="*{name}" />
+            <div id="nameError" class="error-message"></div>
+            <div
+              th:if="${#fields.hasErrors('name')}"
+              class="error-message"
+              th:errors="*{name}"
+            ></div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email<span>*</span></label>
+            <input type="email" id="email" th:field="*{email}" />
+            <div id="emailError" class="error-message"></div>
+            <div
+              th:if="${#fields.hasErrors('email')}"
+              class="error-message"
+              th:errors="*{email}"
+            ></div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone<span>*</span></label>
+            <input type="text" id="phone" th:field="*{phone}" />
+            <div id="phoneError" class="error-message"></div>
+            <div
+              th:if="${#fields.hasErrors('phone')}"
+              class="error-message"
+              th:errors="*{phone}"
+            ></div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address<span>*</span></label>
+            <input type="text" id="address" th:field="*{address}" />
+            <div id="addressError" class="error-message"></div>
+            <div
+              th:if="${#fields.hasErrors('address')}"
+              class="error-message"
+              th:errors="*{address}"
+            ></div>
+          </div>
+
+          <div class="form-group">
+            <label for="status">Status<span>*</span></label>
+            <select id="status" th:field="*{status}">
+              <option value="Active">Active</option>
+              <option value="Deactivate">Deactivate</option>
+            </select>
+            <div id="statusError" class="error-message"></div>
+            <div
+              th:if="${#fields.hasErrors('status')}"
+              class="error-message"
+              th:errors="*{status}"
+            ></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="cancel-btn">Cancel</button>
+            <button type="submit" class="save-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Lấy các phần tử trong DOM
+      const addCustomerBtn = document.querySelector(".add-product-btn");
+      const addCustomerModal = document.getElementById("addCustomerModal");
+      const closeCustomerModal = addCustomerModal.querySelector(".close");
+      const cancelCustomerBtn = addCustomerModal.querySelector(".cancel-btn");
+      const addCustomerForm = document.getElementById("addCustomerForm");
+
+      // Khi click vào nút mở form
+      addCustomerBtn.addEventListener("click", () => {
+        addCustomerModal.style.display = "block";
+      });
+
+      // Khi click vào nút đóng (dấu X)
+      closeCustomerModal.addEventListener("click", () => {
+        addCustomerModal.style.display = "none";
+        clearForm();
+      });
+
+      // Khi click vào nút Cancel
+      cancelCustomerBtn.addEventListener("click", () => {
+        addCustomerModal.style.display = "none";
+        clearForm();
+      });
+
+      // Đóng form khi click ra ngoài modal
+      window.addEventListener("click", (event) => {
+        if (event.target === addCustomerModal) {
+          addCustomerModal.style.display = "none";
+          clearForm();
+        }
+      });
+
+      // Xử lý submit form
+      addCustomerForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        let isValid = true;
+        clearErrors();
+
+        // Lấy giá trị từ form
+        const name = this.name.value.trim();
+        const email = this.email.value.trim();
+        const phone = this.phone.value.trim();
+        const address = this.address.value.trim();
+        const status = this.status.value;
+
+        // Validate name
+        if (name === "") {
+          showError("name", "Tên không được để trống!");
+          isValid = false;
+        } else if (name.length > 100) {
+          showError("name", "Tên không được vượt quá 100 ký tự!");
+          isValid = false;
+        }
+
+        // Validate email
+        if (email !== "") {
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showError("email", "Email không đúng định dạng!");
+            isValid = false;
+          }
+        }
+
+        // Validate phone
+        if (phone !== "") {
+          if (!/^0[0-9]{9}$/.test(phone)) {
+            showError(
+              "phone",
+              "Số điện thoại phải bắt đầu bằng số 0 và có 10 chữ số!"
+            );
+            isValid = false;
+          }
+        }
+
+        // Validate address
+        if (address.length > 255) {
+          showError("address", "Địa chỉ không được vượt quá 255 ký tự!");
+          isValid = false;
+        }
+
+        // Kiểm tra email trùng lặp nếu email hợp lệ
+        if (isValid && email !== "") {
+          fetch(
+            `/admin/customer/check-email?email=${encodeURIComponent(email)}`
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.exists) {
+                showError("email", "Email đã tồn tại!");
+              } else {
+                // Submit form nếu email không trùng
+                submitForm();
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              showError("email", "Có lỗi xảy ra khi kiểm tra email!");
+            });
+        } else if (isValid) {
+          // Submit form nếu không có email hoặc email trống
+          submitForm();
+        }
+      });
+
+      function submitForm() {
+        // Tạo một form mới để submit thực sự
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/admin/customer/add";
+
+        // Copy tất cả các input từ modal form
+        const inputs = addCustomerForm.querySelectorAll("input, select");
+        inputs.forEach((input) => {
+          if (input.name) {
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = input.name;
+            hiddenInput.value = input.value;
+            form.appendChild(hiddenInput);
+          }
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+      }
+
+      function showError(fieldId, message) {
+        const group = document.getElementById(fieldId).closest(".form-group");
+        group.classList.add("error");
+        const errorEl = document.getElementById(fieldId + "Error");
+        if (errorEl) {
+          errorEl.textContent = message;
+          errorEl.style.display = "block";
+        }
+      }
+
+      function clearErrors() {
+        document.querySelectorAll(".form-group").forEach((group) => {
+          group.classList.remove("error");
+          const errorMsg = group.querySelector(
+            "#" + group.querySelector("input, select").id + "Error"
+          );
+          if (errorMsg) {
+            errorMsg.textContent = "";
+            errorMsg.style.display = "none";
+          }
+        });
+      }
+
+      function clearForm() {
+        addCustomerForm.reset();
+        clearErrors();
+      }
+
+
+    </script>
+  </body>
+</html>

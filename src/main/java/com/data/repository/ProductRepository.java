@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.validation.Valid;
-import java.util.Collections;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -72,28 +73,31 @@ public class ProductRepository {
         }
     }
 
-    public long countProducts(String search, Double minPrice, Double maxPrice, Integer stock) {
+    public List<Product> searchProducts(String search, BigDecimal minPrice, BigDecimal maxPrice, Integer stock, int page, int pageSize) {
         Session session = null;
-        Transaction transaction = null;
+        Transaction tx = null;
+        List<Product> products = new ArrayList<>();
+
         try {
             session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
+            tx = session.beginTransaction();
 
-            String hql = "SELECT COUNT(*) FROM Product WHERE 1=1";
+            StringBuilder hql = new StringBuilder("FROM Product WHERE 1=1");
+
             if (search != null && !search.trim().isEmpty()) {
-                hql += " AND LOWER(brand) LIKE :search";
+                hql.append(" AND LOWER(brand) LIKE :search");
             }
             if (minPrice != null) {
-                hql += " AND price >= :minPrice";
+                hql.append(" AND price >= :minPrice");
             }
             if (maxPrice != null) {
-                hql += " AND price <= :maxPrice";
+                hql.append(" AND price <= :maxPrice");
             }
             if (stock != null) {
-                hql += " AND stock >= :stock";
+                hql.append(" AND stock >= :stock");
             }
 
-            Query<Long> query = session.createQuery(hql, Long.class);
+            Query<Product> query = session.createQuery(hql.toString(), Product.class);
 
             if (search != null && !search.trim().isEmpty()) {
                 query.setParameter("search", "%" + search.toLowerCase() + "%");
@@ -108,41 +112,45 @@ public class ProductRepository {
                 query.setParameter("stock", stock);
             }
 
-            Long count = query.uniqueResult();
-            transaction.commit();
-            return count != null ? count : 0;
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
 
+            products = query.getResultList();
+            tx.commit();
         } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
+            if (tx != null) tx.rollback();
             e.printStackTrace();
-            return 0;
         } finally {
             if (session != null) session.close();
         }
+        return products;
     }
 
-    public List<Product> searchProducts(String search, Double minPrice, Double maxPrice, Integer stock, int page, int size) {
+    public long countProducts(String search, BigDecimal minPrice, BigDecimal maxPrice, Integer stock) {
         Session session = null;
-        Transaction transaction = null;
+        Transaction tx = null;
+        long count = 0;
+
         try {
             session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
+            tx = session.beginTransaction();
 
-            String hql = "FROM Product WHERE 1=1";
+            StringBuilder hql = new StringBuilder("SELECT COUNT(*) FROM Product WHERE 1=1");
+
             if (search != null && !search.trim().isEmpty()) {
-                hql += " AND LOWER(brand) LIKE :search";
+                hql.append(" AND LOWER(brand) LIKE :search");
             }
             if (minPrice != null) {
-                hql += " AND price >= :minPrice";
+                hql.append(" AND price >= :minPrice");
             }
             if (maxPrice != null) {
-                hql += " AND price <= :maxPrice";
+                hql.append(" AND price <= :maxPrice");
             }
             if (stock != null) {
-                hql += " AND stock >= :stock";
+                hql.append(" AND stock >= :stock");
             }
 
-            Query<Product> query = session.createQuery(hql, Product.class);
+            Query<Long> query = session.createQuery(hql.toString(), Long.class);
 
             if (search != null && !search.trim().isEmpty()) {
                 query.setParameter("search", "%" + search.toLowerCase() + "%");
@@ -157,21 +165,17 @@ public class ProductRepository {
                 query.setParameter("stock", stock);
             }
 
-            query.setFirstResult((page - 1) * size);
-            query.setMaxResults(size);
-
-            List<Product> products = query.list();
-            transaction.commit();
-            return products;
-
+            count = query.uniqueResult();
+            tx.commit();
         } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
+            if (tx != null) tx.rollback();
             e.printStackTrace();
-            return Collections.emptyList();
         } finally {
             if (session != null) session.close();
         }
+        return count;
     }
+
 
     public boolean save(Product product) {
         Session session = null;

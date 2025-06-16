@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -22,11 +23,11 @@ public class ProductService {
         return productRepository.countTotalProducts();
     }
 
-    public List<Product> searchProducts(String search, Double minPrice, Double maxPrice, Integer stock, int page, int size) {
+    public List<Product> searchProducts(String search, BigDecimal minPrice, BigDecimal maxPrice, Integer stock, int page, int size) {
         return productRepository.searchProducts(search, minPrice, maxPrice, stock, page, size);
     }
 
-    public long countProducts(String search, Double minPrice, Double maxPrice, Integer stock) {
+    public long countProducts(String search, BigDecimal minPrice, BigDecimal maxPrice, Integer stock) {
         return productRepository.countProducts(search, minPrice, maxPrice, stock);
     }
 

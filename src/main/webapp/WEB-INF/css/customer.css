@@ -1,0 +1,21 @@
+.status-btn {
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+    background: none;
+    color: orange;
+    width: 15px;
+    height: 16.67px;
+    top: 1.67px;
+    left: 2.5px;
+    border: 1.67px;
+}
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
