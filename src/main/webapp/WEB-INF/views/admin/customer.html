@@ -31,7 +31,7 @@
             <a href="/admin/product"><span class="icon">📱</span> Products</a>
           </li>
           <li>
-            <a href="#"><span class="icon">📄</span> Invoices</a>
+            <a href="/admin/invoice"><span class="icon">📄</span> Invoices</a>
           </li>
         </ul>
       </nav>
@@ -84,7 +84,7 @@
           </thead>
           <tbody>
             <tr th:each="customer, stat : ${customers}">
-              <td th:text="${stat.count}"></td>
+              <td th:text="${(currentPage - 1) * pageSize + stat.count}"></td>
               <td th:text="${customer.name}"></td>
               <td th:text="${customer.email}"></td>
               <td th:text="${customer.phone}"></td>
@@ -92,18 +92,63 @@
               <td>
                 <span
                   th:if="${customer.status == 'Active'}"
-                  style="color: green"
-                  >● Active</span
+                  style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 10px;
+                    border-radius: 999px;
+                    background-color: #e6f9ef;
+                    color: #16a34a;
+                    font-weight: 500;
+                  "
                 >
+                  <span
+                    style="
+                      width: 8px;
+                      height: 8px;
+                      border-radius: 50%;
+                      background-color: #16a34a;
+                      display: inline-block;
+                    "
+                  ></span>
+                  Active
+                </span>
                 <span
                   th:if="${customer.status == 'Deactivate'}"
-                  style="color: red"
-                  >● Deactivate</span
+                  style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 10px;
+                    border-radius: 999px;
+                    background-color: #fdecea;
+                    color: #dc2626;
+                    font-weight: 500;
+                  "
                 >
+                  <span
+                    style="
+                      width: 8px;
+                      height: 8px;
+                      border-radius: 50%;
+                      background-color: #dc2626;
+                      display: inline-block;
+                    "
+                  ></span>
+                  Deactivate
+                </span>
               </td>
+
               <td>
                 <button class="edit-btn">✏️</button>
-                <button class="status-btn">🔒</button>
+                <button
+                  class="status-btn"
+                  th:data-id="${customer.id}"
+                  th:data-status="${customer.status}"
+                >
+                  🔒
+                </button>
               </td>
             </tr>
           </tbody>
@@ -212,13 +257,116 @@
       </div>
     </div>
 
+    <!-- Edit Customer Modal -->
+    <div id="editCustomerModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Edit Customer</h2>
+        <form
+          id="editCustomerForm"
+          th:action="@{/admin/customer/update}"
+          th:object="${customerDTO}"
+          method="post"
+        >
+          <input type="hidden" id="editId" name="id" />
+          <div class="form-group">
+            <label for="editName">Name<span>*</span></label>
+            <input type="text" id="editName" name="name" />
+            <div id="editNameError" class="error-message"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="editEmail">Email<span>*</span></label>
+            <input type="email" id="editEmail" name="email" />
+            <div id="editEmailError" class="error-message"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="editPhone">Phone<span>*</span></label>
+            <input type="text" id="editPhone" name="phone" />
+            <div id="editPhoneError" class="error-message"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="editAddress">Address<span>*</span></label>
+            <input type="text" id="editAddress" name="address" />
+            <div id="editAddressError" class="error-message"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="editStatus">Status<span>*</span></label>
+            <select id="editStatus" name="status">
+              <option value="Active">Active</option>
+              <option value="Deactivate">Deactivate</option>
+            </select>
+            <div id="editStatusError" class="error-message"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="cancel-btn">Cancel</button>
+            <button type="submit" class="save-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script>
-      // Lấy các phần tử trong DOM
       const addCustomerBtn = document.querySelector(".add-product-btn");
       const addCustomerModal = document.getElementById("addCustomerModal");
       const closeCustomerModal = addCustomerModal.querySelector(".close");
       const cancelCustomerBtn = addCustomerModal.querySelector(".cancel-btn");
       const addCustomerForm = document.getElementById("addCustomerForm");
+
+      // Xử lý nút status
+      document.querySelectorAll(".status-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          const id = this.getAttribute("data-id");
+          const currentStatus = this.getAttribute("data-status");
+
+          fetch("/admin/customer/update-status", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `id=${id}&currentStatus=${currentStatus}`,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                // Cập nhật trạng thái trên giao diện
+                const statusCell = this.closest("tr").querySelector(
+                  "td:nth-last-child(2)"
+                );
+                const newStatus = data.newStatus;
+
+                if (newStatus === "Active") {
+                  statusCell.innerHTML = `
+                  <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background-color: #e6f9ef; color: #16a34a; font-weight: 500;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background-color: #16a34a; display: inline-block;"></span>
+                    Active
+                  </span>
+                `;
+                } else {
+                  statusCell.innerHTML = `
+                  <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background-color: #fdecea; color: #dc2626; font-weight: 500;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background-color: #dc2626; display: inline-block;"></span>
+                    Deactivate
+                  </span>
+                `;
+                }
+
+                // Cập nhật data-status của nút
+                this.setAttribute("data-status", newStatus);
+              } else {
+                alert("Có lỗi xảy ra khi cập nhật trạng thái!");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Có lỗi xảy ra khi cập nhật trạng thái!");
+            });
+        });
+      });
 
       // Khi click vào nút mở form
       addCustomerBtn.addEventListener("click", () => {
@@ -269,32 +417,37 @@
         }
 
         // Validate email
-        if (email !== "") {
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            showError("email", "Email không đúng định dạng!");
-            isValid = false;
-          }
+        if (email === "") {
+          showError("email", "Email không được để trống!");
+          isValid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showError("email", "Email không đúng định dạng!");
+          isValid = false;
         }
 
         // Validate phone
-        if (phone !== "") {
-          if (!/^0[0-9]{9}$/.test(phone)) {
-            showError(
-              "phone",
-              "Số điện thoại phải bắt đầu bằng số 0 và có 10 chữ số!"
-            );
-            isValid = false;
-          }
+        if (phone === "") {
+          showError("phone", "Số điện thoại không được để trống!");
+          isValid = false;
+        } else if (!/^0[0-9]{9}$/.test(phone)) {
+          showError(
+            "phone",
+            "Số điện thoại phải bắt đầu bằng số 0 và có 10 chữ số!"
+          );
+          isValid = false;
         }
 
         // Validate address
-        if (address.length > 255) {
+        if (address === "") {
+          showError("address", "Địa chỉ không được để trống!");
+          isValid = false;
+        } else if (address.length > 255) {
           showError("address", "Địa chỉ không được vượt quá 255 ký tự!");
           isValid = false;
         }
 
-        // Kiểm tra email trùng lặp nếu email hợp lệ
-        if (isValid && email !== "") {
+        if (isValid) {
+          //kiểm tra email
           fetch(
             `/admin/customer/check-email?email=${encodeURIComponent(email)}`
           )
@@ -303,41 +456,35 @@
               if (data.exists) {
                 showError("email", "Email đã tồn tại!");
               } else {
-                // Submit form nếu email không trùng
-                submitForm();
+                // Nếu email không trùng, kiểm tra phone
+                fetch(
+                  `/admin/customer/check-phone?phone=${encodeURIComponent(
+                    phone
+                  )}`
+                )
+                  .then((response) => response.json())
+                  .then((phoneData) => {
+                    if (phoneData.exists) {
+                      showError("phone", "Số điện thoại đã tồn tại!");
+                    } else {
+                      addCustomerForm.submit();
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Error:", error);
+                    showError(
+                      "phone",
+                      "Có lỗi xảy ra khi kiểm tra số điện thoại!"
+                    );
+                  });
               }
             })
             .catch((error) => {
               console.error("Error:", error);
               showError("email", "Có lỗi xảy ra khi kiểm tra email!");
             });
-        } else if (isValid) {
-          // Submit form nếu không có email hoặc email trống
-          submitForm();
         }
       });
-
-      function submitForm() {
-        // Tạo một form mới để submit thực sự
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = "/admin/customer/add";
-
-        // Copy tất cả các input từ modal form
-        const inputs = addCustomerForm.querySelectorAll("input, select");
-        inputs.forEach((input) => {
-          if (input.name) {
-            const hiddenInput = document.createElement("input");
-            hiddenInput.type = "hidden";
-            hiddenInput.name = input.name;
-            hiddenInput.value = input.value;
-            form.appendChild(hiddenInput);
-          }
-        });
-
-        document.body.appendChild(form);
-        form.submit();
-      }
 
       function showError(fieldId, message) {
         const group = document.getElementById(fieldId).closest(".form-group");
@@ -367,7 +514,190 @@
         clearErrors();
       }
 
+      // Edit Customer Modal
+      const editCustomerModal = document.getElementById("editCustomerModal");
+      const closeEditModal = editCustomerModal.querySelector(".close");
+      const cancelEditBtn = editCustomerModal.querySelector(".cancel-btn");
+      const editCustomerForm = document.getElementById("editCustomerForm");
 
+      // Xử lý nút edit
+      document.querySelectorAll(".edit-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          const id = this.closest("tr")
+            .querySelector(".status-btn")
+            .getAttribute("data-id");
+
+          // Lấy thông tin khách hàng
+          fetch(`/admin/customer/${id}`)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data) {
+                document.getElementById("editId").value = data.id;
+                document.getElementById("editName").value = data.name;
+                document.getElementById("editEmail").value = data.email;
+                document.getElementById("editPhone").value = data.phone;
+                document.getElementById("editAddress").value = data.address;
+                document.getElementById("editStatus").value = data.status;
+
+                editCustomerModal.style.display = "block";
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Có lỗi xảy ra khi lấy thông tin khách hàng!");
+            });
+        });
+      });
+
+      // Đóng modal edit
+      closeEditModal.addEventListener("click", () => {
+        editCustomerModal.style.display = "none";
+        clearEditForm();
+      });
+
+      cancelEditBtn.addEventListener("click", () => {
+        editCustomerModal.style.display = "none";
+        clearEditForm();
+      });
+
+      window.addEventListener("click", (event) => {
+        if (event.target === editCustomerModal) {
+          editCustomerModal.style.display = "none";
+          clearEditForm();
+        }
+      });
+
+      // Xử lý submit form edit
+      editCustomerForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        let isValid = true;
+        clearEditErrors();
+
+        // Lấy giá trị từ form
+        const name = this.name.value.trim();
+        const email = this.email.value.trim();
+        const phone = this.phone.value.trim();
+        const address = this.address.value.trim();
+        const status = this.status.value;
+
+        // Validate name
+        if (name === "") {
+          showEditError("name", "Tên không được để trống!");
+          isValid = false;
+        } else if (name.length > 100) {
+          showEditError("name", "Tên không được vượt quá 100 ký tự!");
+          isValid = false;
+        }
+
+        // Validate email
+        if (email === "") {
+          showEditError("email", "Email không được để trống!");
+          isValid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showEditError("email", "Email không đúng định dạng!");
+          isValid = false;
+        }
+
+        // Validate phone
+        if (phone === "") {
+          showEditError("phone", "Số điện thoại không được để trống!");
+          isValid = false;
+        } else if (!/^0[0-9]{9}$/.test(phone)) {
+          showEditError(
+            "phone",
+            "Số điện thoại phải bắt đầu bằng số 0 và có 10 chữ số!"
+          );
+          isValid = false;
+        }
+
+        // Validate address
+        if (address === "") {
+          showEditError("address", "Địa chỉ không được để trống!");
+          isValid = false;
+        } else if (address.length > 255) {
+          showEditError("address", "Địa chỉ không được vượt quá 255 ký tự!");
+          isValid = false;
+        }
+
+        // Kiểm tra email và phone trùng lặp nếu tất cả đều hợp lệ
+        if (isValid) {
+          const id = document.getElementById("editId").value;
+          // Kiểm tra email trước
+          fetch(
+            `/admin/customer/check-email?email=${encodeURIComponent(
+              email
+            )}&id=${id}`
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.exists) {
+                showEditError("email", "Email đã tồn tại!");
+              } else {
+                // Nếu email không trùng, kiểm tra phone
+                fetch(
+                  `/admin/customer/check-phone?phone=${encodeURIComponent(
+                    phone
+                  )}&id=${id}`
+                )
+                  .then((response) => response.json())
+                  .then((phoneData) => {
+                    if (phoneData.exists) {
+                      showEditError("phone", "Số điện thoại đã tồn tại!");
+                    } else {
+                      // Nếu cả email và phone đều không trùng, submit form
+                      editCustomerForm.submit();
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Error:", error);
+                    showEditError(
+                      "phone",
+                      "Có lỗi xảy ra khi kiểm tra số điện thoại!"
+                    );
+                  });
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              showEditError("email", "Có lỗi xảy ra khi kiểm tra email!");
+            });
+        }
+      });
+
+      function showEditError(fieldId, message) {
+        const group = document
+          .getElementById(
+            "edit" + fieldId.charAt(0).toUpperCase() + fieldId.slice(1)
+          )
+          .closest(".form-group");
+        group.classList.add("error");
+        const errorEl = document.getElementById(
+          "edit" + fieldId.charAt(0).toUpperCase() + fieldId.slice(1) + "Error"
+        );
+        if (errorEl) {
+          errorEl.textContent = message;
+          errorEl.style.display = "block";
+        }
+      }
+
+      function clearEditErrors() {
+        document
+          .querySelectorAll("#editCustomerForm .form-group")
+          .forEach((group) => {
+            group.classList.remove("error");
+            const errorMsg = group.querySelector(".error-message");
+            if (errorMsg) {
+              errorMsg.textContent = "";
+              errorMsg.style.display = "none";
+            }
+          });
+      }
+
+      function clearEditForm() {
+        editCustomerForm.reset();
+        clearEditErrors();
+      }
     </script>
   </body>
 </html>

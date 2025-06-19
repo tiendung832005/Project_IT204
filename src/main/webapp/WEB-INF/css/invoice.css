@@ -8,26 +8,34 @@
 .status-badge.pending {
     background: #FFDD99;
     color: #FF9900;
+    border: 1px solid #FF9900;
+
 }
 
-.status-badge.confirming {
+.status-badge.confirmed {
     background: #D9CCFF;
     color: #7D4CFF;
+    border: 1px solid #7D4CFF;
+
 }
 
-.status-badge.shipping {
+.status-badge.shiping {
     background: #99EEFF;
     color: #0099FF;
+    border: 1px solid #0099FF;
+
 }
 
 .status-badge.completed {
     background: #B3FFB3;
     color: #00CC00;
+    border: 1px solid #00CC00;
 }
 
-.status-badge.cancelled {
+.status-badge.canceled {
     background: #FFCCCC;
     color: #FF3333;
+    border: 1px solid #FF3333;
 }
 .add-invoice-btn{
         background: #FF6B35;
@@ -41,4 +49,338 @@
 }
 .add-invoice-btn:hover {
     background: #E55A2B;
+}
+
+/* Search styles */
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-inputs {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+}
+
+.search-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 200px;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #FF6B35;
+    box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+}
+
+.date-input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: #FF6B35;
+    box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+}
+
+.search-btn {
+    background: #FF6B35;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.search-btn:hover {
+    background: #E55A2B;
+}
+
+.clear-btn {
+    background: #6B7280;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.clear-btn:hover {
+    background: #4B5563;
+}
+
+/* Search Results Info */
+.search-info {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+}
+
+.search-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.search-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.search-criteria {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.result-count {
+    color: #FF6B35;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Pagination styles */
+.bottom-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+}
+
+.pagination {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.page-btn {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    min-width: 35px;
+    text-align: center;
+}
+
+.page-btn:hover:not(.disabled) {
+    background: #FF6B35;
+    color: white;
+    border-color: #FF6B35;
+}
+
+.page-btn.active {
+    background: #FF6B35;
+    color: white;
+    border-color: #FF6B35;
+}
+
+.page-btn.disabled {
+    color: #ccc;
+    cursor: not-allowed;
+    background: #f5f5f5;
+}
+
+.page-dots {
+    padding: 8px 4px;
+    color: #666;
+}
+
+.page-info {
+    color: #666;
+    font-size: 14px;
+}
+
+.view-btn{
+    border: none;
+    background-color: #fefefe;
+    cursor: pointer;
+}
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 900px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 15px;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+/* Invoice info styles */
+.invoice-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #FF6B35;
+}
+
+.info-row {
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-row strong {
+    color: #333;
+    min-width: 120px;
+}
+
+/* Table styles */
+.table-container {
+    margin-top: 20px;
+}
+
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.detail-table th {
+    background: #FF6B35;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.detail-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.detail-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Form styles for edit modal */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group .required {
+    color: #dc2626;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: #FF6B35;
+    box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.cancel-btn {
+    background-color: #E4E4E7;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.save-btn {
+    background: #FF6B35;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
 }

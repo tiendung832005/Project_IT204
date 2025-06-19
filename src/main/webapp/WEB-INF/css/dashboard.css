@@ -531,5 +531,84 @@ body {
         position: relative;
         height: 300px;
     }
+}
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 12px;
+}
+.status-badge.pending {
+    width: fit-content;
+    background: #FFDD99;
+    color: #FF9900;
+    border: 1px solid #FF9900;
+}
 
+.status-badge.confirmed {
+    width: fit-content;
+    background: #D9CCFF;
+    color: #7D4CFF;
+    border: 1px solid #7D4CFF;
+
+}
+
+.status-badge.shiping {
+    width: fit-content;
+    background: #99EEFF;
+    color: #0099FF;
+    border: 1px solid #0099FF;
+
+}
+
+.status-badge.completed {
+    width: fit-content;
+    background: #B3FFB3;
+    color: #00CC00;
+    border: 1px solid #00CC00;
+
+}
+
+.status-badge.canceled {
+    width: fit-content;
+    background: #FFCCCC;
+    color: #FF3333;
+    border: 1px solid #FF3333;
+
+}
+
+.status-badge1{
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 12px;
+    width: 1px;
+    height: 1px;
+}
+.status-badge1.pending {
+    background: #FFDD99;
+    color: #FF9900;
+}
+
+.status-badge1.confirmed {
+    background: #D9CCFF;
+    color: #7D4CFF;
+
+}
+
+.status-badge1.shiping {
+    background: #99EEFF;
+    color: #0099FF;
+
+}
+
+.status-badge1.completed {
+    background: #B3FFB3;
+    color: #00CC00;
+
+}
+
+.status-badge1.canceled {
+    background: #FFCCCC;
+    color: #FF3333;
 }

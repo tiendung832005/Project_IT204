@@ -23,7 +23,8 @@ public class ProductService {
         return productRepository.countTotalProducts();
     }
 
-    public List<Product> searchProducts(String search, BigDecimal minPrice, BigDecimal maxPrice, Integer stock, int page, int size) {
+    public List<Product> searchProducts(String search, BigDecimal minPrice, BigDecimal maxPrice, Integer stock,
+                                        int page, int size) {
         return productRepository.searchProducts(search, minPrice, maxPrice, stock, page, size);
     }
 
@@ -53,5 +54,9 @@ public class ProductService {
 
     public boolean isNameDuplicate(String name) {
         return productRepository.existsByName(name);
+    }
+
+    public boolean updateStatus(Integer id, String newStatus) {
+        return productRepository.updateStatus(id, newStatus);
     }
 }

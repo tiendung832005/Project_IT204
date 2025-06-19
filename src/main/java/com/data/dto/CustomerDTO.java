@@ -10,17 +10,20 @@ public class CustomerDTO {
 
     @NotBlank(message = "Tên không được để trống!")
     @Size(max = 100, message = "Tên không được vượt quá 100 ký tự!")
-    @Pattern(regexp = "^[^\\s]*[a-zA-Z0-9À-ỹ][^\\s]*$", message = "Tên không được chứa ký tự đặc biệt và không được toàn khoảng trắng!")
+    @Pattern(regexp = "^[a-zA-Z0-9À-ỹ\\s]+$", message = "Tên chỉ được chứa chữ, số và khoảng trắng!")
     private String name;
 
-    @Pattern(regexp = "^(0[0-9]{9}|\\s*)$", message = "Số điện thoại không đúng định dạng!")
+    @NotBlank(message = "Số điện thoại không được để trống!")
+    @Pattern(regexp = "^0[0-9]{9}$", message = "Số điện thoại phải bắt đầu bằng số 0 và có 10 chữ số!")
     @Size(max = 20, message = "Số điện thoại không được vượt quá 20 ký tự!")
     private String phone;
 
+    @NotBlank(message = "Email không được để trống!")
     @Email(message = "Email không đúng định dạng!")
     @Pattern(regexp = "^[^\\s]*[a-zA-Z0-9@._-][^\\s]*$", message = "Email không được chứa khoảng trắng!")
     private String email;
 
+    @NotBlank(message = "Địa chỉ không được để trống!")
     @Size(max = 255, message = "Địa chỉ không được vượt quá 255 ký tự!")
     private String address;
 
@@ -75,5 +78,17 @@ public class CustomerDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "CustomerDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", status='" + status + '\'' +
+                '}';
     }
 }

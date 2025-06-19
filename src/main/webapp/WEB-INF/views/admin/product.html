@@ -111,14 +111,15 @@
               <th>Image</th>
               <th>Price</th>
               <th>Stock</th>
+              <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             <tr th:each="product, stat : ${products}">
-              <td th:text="${stat.count + (currentPage - 1) * 10}">1</td>
-              <td th:text="${product.name}">iPhone 15 Pro Max</td>
-              <td th:text="${product.brand}">Apple</td>
+              <td th:text="${(currentPage - 1) * pageSize + stat.count}"></td>
+              <td th:text="${product.name}"></td>
+              <td th:text="${product.brand}"></td>
               <td>
                 <img
                   class="product-img"
@@ -128,35 +129,79 @@
               </td>
               <td
                 th:text="${'$' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}"
-              >
-                $1,199
-              </td>
-              <td th:text="${product.stock}">35</td>
+              ></td>
+              <td th:text="${product.stock}"></td>
               <td>
-                <!-- Form xóa sản phẩm -->
-                <form
-                  th:action="@{/admin/product/delete/{id}(id=${product.id})}"
-                  method="post"
-                  style="display: inline"
+                <span
+                  th:if="${product.status == 'Active'}"
+                  style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 10px;
+                    border-radius: 999px;
+                    background-color: #e6f9ef;
+                    color: #16a34a;
+                    font-weight: 500;
+                  "
                 >
-                  <button
-                    type="submit"
-                    class="delete-btn"
-                    onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')"
-                  >
-                    🗑️
-                  </button>
-                </form>
+                  <span
+                    style="
+                      width: 8px;
+                      height: 8px;
+                      border-radius: 50%;
+                      background-color: #16a34a;
+                      display: inline-block;
+                    "
+                  ></span>
+                  Active
+                </span>
+                <span
+                  th:if="${product.status == 'Deactivate'}"
+                  style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 10px;
+                    border-radius: 999px;
+                    background-color: #fdecea;
+                    color: #dc2626;
+                    font-weight: 500;
+                  "
+                >
+                  <span
+                    style="
+                      width: 8px;
+                      height: 8px;
+                      border-radius: 50%;
+                      background-color: #dc2626;
+                      display: inline-block;
+                    "
+                  ></span>
+                  Deactivate
+                </span>
+              </td>
+              <td class="btn">
                 <button
                   class="edit-btn"
-                  th:attr="data-id=${product.id}, data-name=${product.name}, data-brand=${product.brand}, data-price=${product.price}, data-stock=${product.stock}, data-image=${product.image}"
+                  th:attr="data-id=${product.id}, data-name=${product.name}, data-brand=${product.brand}, data-price=${product.price}, data-stock=${product.stock}, data-image=${product.image}, data-status=${product.status}"
                 >
                   ✏️
+                </button>
+
+                <!-- Nút đổi trạng thái -->
+                <button
+                  class="status-btn"
+                  th:data-id="${product.id}"
+                  th:data-status="${product.status}"
+                >
+                  🔒
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
+
         <div class="bottom-pagination">
           <div class="pagination">
             <a
@@ -225,6 +270,15 @@
             <label for="stock">Stock<span>*</span></label>
             <input type="number" id="stock" name="stock" />
             <div id="stockError" class="error-message"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="status">Status<span>*</span></label>
+            <select id="status" name="status">
+              <option value="Active">Active</option>
+              <option value="Deactivate">Deactivate</option>
+            </select>
+            <div id="statusError" class="error-message"></div>
           </div>
 
           <div class="form-actions">
@@ -302,6 +356,15 @@
             <div id="stock1Error" class="error-message"></div>
           </div>
 
+          <div class="form-group">
+            <label for="edit-status">Status<span>*</span></label>
+            <select id="edit-status" name="status">
+              <option value="Active">Active</option>
+              <option value="Deactivate">Deactivate</option>
+            </select>
+            <div id="status1Error" class="error-message"></div>
+          </div>
+
           <div class="form-actions">
             <button type="button" class="cancel-edit-btn">Cancel</button>
             <button type="submit" class="save-btn">Save</button>
@@ -334,6 +397,7 @@
         const price = form.price.value.trim();
         const stock = form.stock.value.trim();
         const image = form.image.files[0];
+        const status = form.status.value;
 
         if (name === "") {
           showError("name", "Hãy nhập vào tên sản phẩm ...");
@@ -357,6 +421,11 @@
 
         if (!image) {
           showError("image", "Hãy upload ảnh ...");
+          isValid = false;
+        }
+
+        if (status === "") {
+          showError("status", "Hãy chọn trạng thái ...");
           isValid = false;
         }
 
@@ -415,6 +484,7 @@
           const price = this.getAttribute("data-price");
           const stock = this.getAttribute("data-stock");
           const image = this.getAttribute("data-image");
+          const status = this.getAttribute("data-status");
 
           // Điền data vào form
           document.getElementById("edit-id").value = id;
@@ -422,6 +492,7 @@
           document.getElementById("edit-brand").value = brand;
           document.getElementById("edit-price").value = price;
           document.getElementById("edit-stock").value = stock;
+          document.getElementById("edit-status").value = status;
           document.getElementById("currentImagePreview").src = image;
 
           // Hiển thị modal
@@ -454,6 +525,7 @@
         const stock = editForm.stock.value.trim();
         const image = editForm.image.files[0];
         const id = editForm.id.value;
+        const status = editForm.status.value;
 
         // Validate name
         if (name === "") {
@@ -474,6 +546,11 @@
 
         if (stock === "" || parseInt(stock) < 0) {
           showEditError("stock", "Số lượng phải lớn hơn 0 ...");
+          isValid = false;
+        }
+
+        if (status === "") {
+          showEditError("status", "Hãy chọn trạng thái ...");
           isValid = false;
         }
 
@@ -535,6 +612,56 @@
         }
       };
 
+      // Xử lý nút status
+      document.querySelectorAll(".status-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          const id = this.getAttribute("data-id");
+          const currentStatus = this.getAttribute("data-status");
+
+          fetch("/admin/product/update-status", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `id=${id}&currentStatus=${currentStatus}`,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                // Cập nhật trạng thái trên giao diện
+                const statusCell = this.closest("tr").querySelector(
+                  "td:nth-last-child(2)"
+                );
+                const newStatus = data.newStatus;
+
+                if (newStatus === "Active") {
+                  statusCell.innerHTML = `
+                  <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background-color: #e6f9ef; color: #16a34a; font-weight: 500;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background-color: #16a34a; display: inline-block;"></span>
+                    Active
+                  </span>
+                `;
+                } else {
+                  statusCell.innerHTML = `
+                  <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background-color: #fdecea; color: #dc2626; font-weight: 500;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background-color: #dc2626; display: inline-block;"></span>
+                    Deactivate
+                  </span>
+                `;
+                }
+
+                // Cập nhật data-status của nút
+                this.setAttribute("data-status", newStatus);
+              } else {
+                alert("Có lỗi xảy ra khi cập nhật trạng thái!");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Có lỗi xảy ra khi cập nhật trạng thái!");
+            });
+        });
+      });
     </script>
   </body>
 </html>

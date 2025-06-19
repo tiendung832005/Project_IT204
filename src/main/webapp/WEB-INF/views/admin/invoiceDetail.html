@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Invoice Detail</title>
+    <link rel="stylesheet" href="/css/invoiceDetail.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">Mobile <span class="shop-text">SHOP</span></div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav>
+        <ul class="sidebar-menu">
+          <li>
+            <a href="/admin/dashboard"
+              ><span class="icon">📊</span> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="/admin/customer"><span class="icon">👥</span> Customer</a>
+          </li>
+          <li>
+            <a href="/admin/product"><span class="icon">📱</span> Products</a>
+          </li>
+          <li>
+            <a href="/admin/invoice" class="active"
+              ><span class="icon">📄</span> Invoices</a
+            >
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sign-out">
+        <a href="/admin/logout"><span class="icon">🚪</span> Sign out</a>
+      </div>
+    </aside>
+
+    <div class="container">
+      <main class="main">
+        <div class="title">FORM INVOICE</div>
+
+        <!-- Thông báo -->
+        <div id="notification" class="notification" style="display: none">
+          <div class="notification-content">
+            <span id="notification-message"></span>
+            <button onclick="closeNotification()" class="close-btn">
+              &times;
+            </button>
+          </div>
+        </div>
+
+        <form
+          id="invoiceForm"
+          th:action="@{/admin/invoice/create}"
+          th:object="${invoiceDTO}"
+          method="post"
+          onsubmit="return handleSubmit(event)"
+        >
+          <div class="form-group">
+            <label>Customer <span class="required">*</span></label>
+            <select th:field="*{customerId}" required>
+              <option value="">Select Customer</option>
+              <option
+                th:each="customer : ${customers}"
+                th:value="${customer.id}"
+                th:text="${customer.name}"
+              ></option>
+            </select>
+          </div>
+
+          <div class="invoice-box">
+            <div class="invoice-header">INVOICE DETAIL</div>
+
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th>STT</th>
+                  <th>Product Name</th>
+                  <th>Brand</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Total Amount</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="invoiceDetails">
+                <!-- Chi tiết hóa đơn sẽ được thêm vào đây bằng JavaScript -->
+              </tbody>
+            </table>
+
+            <div class="footer-icon">
+              <div style="text-align: center; margin-top: 10px">
+                <button
+                  type="button"
+                  class="add-product-btn"
+                  onclick="openModal()"
+                >
+                  🛒
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button
+              type="button"
+              class="btn cancel"
+              onclick="window.location.href='/admin/invoice'"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn save">Save</button>
+          </div>
+        </form>
+      </main>
+    </div>
+
+    <!-- Modal for adding products -->
+    <div id="productModal" class="modal">
+      <div class="modal-content">
+        <h2>Add Invoice Detail</h2>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Product Name</th>
+                <th>Brand</th>
+                <th>Quantity</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="product, stat : ${products}">
+                <td>
+                  <input
+                    type="checkbox"
+                    th:data-id="${product.id}"
+                    th:data-name="${product.name}"
+                    th:data-brand="${product.brand}"
+                    th:data-price="${product.price}"
+                  />
+                </td>
+                <td th:text="${product.name}"></td>
+                <td th:text="${product.brand}"></td>
+                <td><input type="number" value="1" min="1" /></td>
+                <td th:text="${product.price + ' $'}"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="modal-footer">
+          <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+          <button class="save-btn" onclick="addSelectedProducts()">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let invoiceDetails = [];
+
+      function handleSubmit(event) {
+        event.preventDefault();
+
+        const customerId = document.querySelector(
+          'select[name="customerId"]'
+        ).value;
+        if (!customerId) {
+          showNotification("Vui lòng chọn khách hàng!");
+          return false;
+        }
+
+        if (invoiceDetails.length === 0) {
+          showNotification("Vui lòng thêm ít nhất một sản phẩm vào hóa đơn!");
+          return false;
+        }
+
+        const details = invoiceDetails.map((detail) => ({
+          productId: parseInt(detail.productId),
+          quantity: parseInt(detail.quantity),
+          unitPrice: parseFloat(detail.unitPrice),
+        }));
+
+        const invoiceData = {
+          customerId: parseInt(customerId),
+          details: details,
+        };
+
+        console.log("Sending invoice data:", invoiceData);
+
+        fetch("/admin/invoice/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(invoiceData),
+        })
+          .then((response) => {
+            console.log("Response status:", response.status);
+            return response.text();
+          })
+          .then((data) => {
+            console.log("Response data:", data);
+
+            // Kiểm tra response status để xác định thành công hay thất bại
+            if (data === "successfully!") {
+              // Thành công - hiển thị thông báo và chuyển hướng
+              showNotification("Tạo hóa đơn thành công!", "success");
+              setTimeout(() => {
+                window.location.href = "/admin/invoice";
+              }, 1500);
+            } else {
+              // Thất bại - hiển thị thông báo lỗi và ở lại trang
+              showNotification(data, "error");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showNotification("Có lỗi xảy ra khi lưu hóa đơn", "error");
+          });
+
+        return false;
+      }
+
+      function showNotification(message, type = "error") {
+        const notification = document.getElementById("notification");
+        const messageElement = document.getElementById("notification-message");
+
+        messageElement.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.style.display = "block";
+
+        // Tự động ẩn sau 3 giây
+        setTimeout(() => {
+          notification.style.display = "none";
+        }, 3000);
+      }
+
+      function closeNotification() {
+        document.getElementById("notification").style.display = "none";
+      }
+
+      function openModal() {
+        document.getElementById("productModal").style.display = "block";
+      }
+
+      function closeModal() {
+        document.getElementById("productModal").style.display = "none";
+      }
+
+      function addSelectedProducts() {
+        const checkboxes = document.querySelectorAll(
+          '#productModal input[type="checkbox"]:checked'
+        );
+        checkboxes.forEach((checkbox) => {
+          const row = checkbox.closest("tr");
+          const quantityInput = row.querySelector('input[type="number"]');
+          const quantity = parseInt(quantityInput.value);
+
+          if (quantity > 0) {
+            const productId = checkbox.getAttribute("data-id");
+            const productName = checkbox.getAttribute("data-name");
+            const brand = checkbox.getAttribute("data-brand");
+            const price = parseFloat(checkbox.getAttribute("data-price"));
+
+            // Kiểm tra xem sản phẩm đã tồn tại trong danh sách chưa
+            const existingIndex = invoiceDetails.findIndex(
+              (detail) => detail.productId === productId
+            );
+            if (existingIndex === -1) {
+              invoiceDetails.push({
+                productId: productId,
+                productName: productName,
+                brand: brand,
+                quantity: quantity,
+                unitPrice: price,
+                subtotal: price * quantity,
+              });
+            } else {
+              // Nếu đã tồn tại, cập nhật số lượng
+              invoiceDetails[existingIndex].quantity += quantity;
+              invoiceDetails[existingIndex].subtotal =
+                invoiceDetails[existingIndex].quantity * price;
+            }
+          }
+        });
+
+        updateInvoiceDetailsTable();
+        closeModal();
+      }
+
+      function updateInvoiceDetailsTable() {
+        const tbody = document.getElementById("invoiceDetails");
+        tbody.innerHTML = "";
+
+        invoiceDetails.forEach((detail, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${detail.productName}</td>
+                <td>${detail.brand}</td>
+                <td>
+                    <div class="quantity-control">
+                        <button type="button" onclick="updateQuantity(${index}, -1)">-</button>
+                        <input type="number" value="${
+                          detail.quantity
+                        }" min="1" onchange="updateQuantity(${index}, 0, this.value)" />
+                        <button type="button" onclick="updateQuantity(${index}, 1)">+</button>
+                    </div>
+                </td>
+                <td class="text-right">${detail.unitPrice} $</td>
+                <td class="text-right">${detail.subtotal} $</td>
+                <td class="text-center">
+                    <button type="button" class="delete-btn" onclick="removeDetail(${index})">🗑️</button>
+                </td>
+            `;
+          tbody.appendChild(row);
+        });
+      }
+
+      function updateQuantity(index, change, newValue) {
+        const detail = invoiceDetails[index];
+        if (newValue !== undefined) {
+          detail.quantity = parseInt(newValue);
+        } else {
+          detail.quantity += change;
+        }
+
+        if (detail.quantity < 1) detail.quantity = 1;
+        detail.subtotal = detail.quantity * detail.unitPrice;
+        updateInvoiceDetailsTable();
+      }
+
+      function removeDetail(index) {
+        invoiceDetails.splice(index, 1);
+        updateInvoiceDetailsTable();
+      }
+    </script>
+  </body>
+</html>

@@ -21,7 +21,6 @@ public class CustomerService {
         return customerRepository.countTotalCustomers();
     }
 
-    @Transactional
     public boolean addCustomer(Customer customer) {
         try {
             return customerRepository.save(customer);
@@ -37,5 +36,30 @@ public class CustomerService {
 
     public boolean isEmailDuplicate(String email, Integer id) {
         return customerRepository.existsByEmailAndIdNot(email, id);
+    }
+
+    public boolean isPhoneDuplicate(String phone) {
+        return customerRepository.existsByPhone(phone);
+    }
+
+    public boolean isPhoneDuplicate(String phone, Integer id) {
+        return customerRepository.existsByPhoneAndIdNot(phone, id);
+    }
+
+    public boolean updateCustomerStatus(Integer id, String newStatus) {
+        return customerRepository.updateStatus(id, newStatus);
+    }
+
+    public Customer getCustomerById(Integer id) {
+        return customerRepository.findById(id);
+    }
+
+    public boolean updateCustomer(Customer customer) {
+        try {
+            return customerRepository.updateCustomer(customer);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

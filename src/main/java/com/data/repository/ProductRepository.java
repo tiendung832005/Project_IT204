@@ -73,7 +73,8 @@ public class ProductRepository {
         }
     }
 
-    public List<Product> searchProducts(String search, BigDecimal minPrice, BigDecimal maxPrice, Integer stock, int page, int pageSize) {
+    public List<Product> searchProducts(String search, BigDecimal minPrice, BigDecimal maxPrice, Integer stock,
+                                        int page, int pageSize) {
         Session session = null;
         Transaction tx = null;
         List<Product> products = new ArrayList<>();
@@ -94,7 +95,7 @@ public class ProductRepository {
                 hql.append(" AND price <= :maxPrice");
             }
             if (stock != null) {
-                hql.append(" AND stock >= :stock");
+                hql.append(" AND stock = :stock");
             }
 
             Query<Product> query = session.createQuery(hql.toString(), Product.class);
@@ -118,10 +119,12 @@ public class ProductRepository {
             products = query.getResultList();
             tx.commit();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            if (tx != null)
+                tx.rollback();
             e.printStackTrace();
         } finally {
-            if (session != null) session.close();
+            if (session != null)
+                session.close();
         }
         return products;
     }
@@ -147,7 +150,7 @@ public class ProductRepository {
                 hql.append(" AND price <= :maxPrice");
             }
             if (stock != null) {
-                hql.append(" AND stock >= :stock");
+                hql.append(" AND stock = :stock");
             }
 
             Query<Long> query = session.createQuery(hql.toString(), Long.class);
@@ -168,14 +171,15 @@ public class ProductRepository {
             count = query.uniqueResult();
             tx.commit();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            if (tx != null)
+                tx.rollback();
             e.printStackTrace();
         } finally {
-            if (session != null) session.close();
+            if (session != null)
+                session.close();
         }
         return count;
     }
-
 
     public boolean save(Product product) {
         Session session = null;
@@ -322,6 +326,34 @@ public class ProductRepository {
 
             transaction.commit();
             return count != null && count > 0;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
+
+    public boolean updateStatus(Integer id, String newStatus) {
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            Product product = session.get(Product.class, id);
+            if (product != null) {
+                product.setStatus(newStatus);
+                session.update(product);
+                transaction.commit();
+                return true;
+            }
+            return false;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();

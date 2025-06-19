@@ -52,6 +52,7 @@ public class ProductController {
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("stock", stock);
+        model.addAttribute("pageSize", pageSize);
 
         if (!model.containsAttribute("productDTO")) {
             model.addAttribute("productDTO", new ProductDTO());
@@ -59,7 +60,6 @@ public class ProductController {
 
         return "admin/product";
     }
-
 
     @PostMapping("/product/add")
     public String addProduct(
@@ -93,6 +93,7 @@ public class ProductController {
             product.setPrice(productDTO.getPrice());
             product.setStock(productDTO.getStock());
             product.setImage(imageUrl);
+            product.setStatus(productDTO.getStatus());
 
             // Lưu vào database
             boolean success = productService.addProduct(product);
@@ -147,6 +148,7 @@ public class ProductController {
             existingProduct.setBrand(productDTO.getBrand());
             existingProduct.setPrice(productDTO.getPrice());
             existingProduct.setStock(productDTO.getStock());
+            existingProduct.setStatus(productDTO.getStatus());
 
             // Nếu có upload ảnh mới
             if (productDTO.getImage() != null && !productDTO.getImage().isEmpty()) {
@@ -208,6 +210,33 @@ public class ProductController {
         }
 
         response.put("exists", exists);
+        return response;
+    }
+
+    @PostMapping("/product/update-status")
+    @ResponseBody
+    public Map<String, Object> updateStatus(
+            @RequestParam Integer id,
+            @RequestParam String currentStatus) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String newStatus = currentStatus.equals("Active") ? "Deactivate" : "Active";
+            boolean success = productService.updateStatus(id, newStatus);
+
+            if (success) {
+                response.put("success", true);
+                response.put("newStatus", newStatus);
+            } else {
+                response.put("success", false);
+                response.put("message", "Không thể cập nhật trạng thái sản phẩm!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "Có lỗi xảy ra: " + e.getMessage());
+        }
+
         return response;
     }
 }

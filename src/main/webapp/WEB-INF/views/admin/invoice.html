@@ -1,93 +1,483 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Invoices Management</title>
-  <link rel="stylesheet" href="/css/invoice.css">
-  <link rel="stylesheet" href="/css/dashboard.css">
-  <link rel="stylesheet" href="/css/product.css">
-
+    <meta charset="UTF-8"/>
+    <title>Invoices Management</title>
+    <link rel="stylesheet" href="/css/invoice.css"/>
+    <link rel="stylesheet" href="/css/dashboard.css"/>
+    <link rel="stylesheet" href="/css/product.css"/>
 </head>
 <body>
-
 <!-- Header -->
 <header class="header">
-  <div class="logo">Mobile <span class="shop-text">SHOP</span></div>
+    <div class="logo">Mobile <span class="shop-text">SHOP</span></div>
 </header>
 
 <!-- Sidebar -->
 <aside class="sidebar">
-  <nav>
-    <ul class="sidebar-menu">
-      <li><a href="/admin/dashboard"><span class="icon">📊</span> Dashboard</a></li>
-      <li><a href="/admin/customer"><span class="icon">👥</span> Customer</a></li>
-      <li><a href="/admin/product"><span class="icon">📱</span> Products</a></li>
-      <li><a href="/admin/invoice" class="active"><span class="icon">📄</span> Invoices</a></li>
-    </ul>
-  </nav>
+    <nav>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="/admin/dashboard"
+                ><span class="icon">📊</span> Dashboard</a
+                >
+            </li>
+            <li>
+                <a href="/admin/customer"><span class="icon">👥</span> Customer</a>
+            </li>
+            <li>
+                <a href="/admin/product"><span class="icon">📱</span> Products</a>
+            </li>
+            <li>
+                <a href="/admin/invoice" class="active"
+                ><span class="icon">📄</span> Invoices</a
+                >
+            </li>
+        </ul>
+    </nav>
 
-  <div class="sign-out">
-    <a href="/admin/logout"><span class="icon">🚪</span> Sign out</a>
-  </div>
+    <div class="sign-out">
+        <a href="/admin/logout"><span class="icon">🚪</span> Sign out</a>
+    </div>
 </aside>
 
 <!-- Main Content -->
 <main class="main-content">
-  <div class="products-section">
-    <div class="products-header">
-      <h3 class="products-title">Invoices Management</h3>
-    </div>
+    <div class="products-section">
+        <div class="products-header">
+            <h3 class="products-title">Invoices Management</h3>
+        </div>
 
-    <div class="top-controls">
-      <button class="add-invoice-btn">+ Add Invoice</button>
-      <form class="search-box" method="get" action="/admin/invoice">
-        <input type="text" name="search" placeholder="Search by customer name..." class="search-input"/>
-        <button type="submit" class="search-btn">🔍</button>
-      </form>
-    </div>
+        <div class="top-controls">
+            <a href="/admin/invoiceDetail"
+            >
+                <button class="add-invoice-btn">+ Add Invoice</button>
+            </a
+            >
+            <form class="search-box" method="get" action="/admin/invoice">
+                <input type="hidden" name="page" value="1"/>
+                <div class="search-inputs">
+                    <input
+                            type="text"
+                            name="search"
+                            placeholder="Search by customer name..."
+                            class="search-input"
+                            th:value="${param.search}"
+                    />
+                    <input
+                            type="date"
+                            name="dateFrom"
+                            placeholder="From date"
+                            class="date-input"
+                            th:value="${param.dateFrom}"
+                    />
+                    <input
+                            type="date"
+                            name="dateTo"
+                            placeholder="To date"
+                            class="date-input"
+                            th:value="${param.dateTo}"
+                    />
+                </div>
+                <button type="submit" class="search-btn">🔍</button>
+                <button type="button" class="clear-btn" onclick="clearSearch()">
+                    Clear
+                </button>
+            </form>
+        </div>
 
-    <table class="product-table">
-      <thead>
-      <tr>
-        <th>STT</th>
-        <th>Customer Name</th>
-        <th>Created At</th>
-        <th>Status</th>
-        <th>Total Amount</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <!-- Sample row -->
-      <tr>
-        <td>1</td>
-        <td>Michael Ballack</td>
-        <td>20/10/2022</td>
-        <td><span class="status-badge pending">PENDING</span></td>
-        <td>1,200 $</td>
-        <td>
-          <button class="delete-btn">🗑️</button>
-          <button class="edit-btn">✏️</button>
-          <button class="view-btn">👁️</button>
-        </td>
-      </tr>
-      <!-- thêm nhiều row nếu cần -->
-      </tbody>
-    </table>
+        <table class="product-table">
+            <thead>
+            <tr>
+                <th>STT</th>
+                <th>Customer Name</th>
+                <th>Created At</th>
+                <th>Status</th>
+                <th>Total Amount</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(invoices)}">
+                <td colspan="6" style="text-align: center; padding: 20px">
+                    No invoices found
+                </td>
+            </tr>
+            <tr th:each="invoice, stat : ${invoices}">
+                <td th:text="${stat.count}"></td>
+                <td th:text="${invoice.customer.name}"></td>
+                <td
+                        th:text="${#dates.format(invoice.createdAt, 'dd/MM/yyyy HH:mm')}"
+                ></td>
+                <td>
+                <span
+                        th:class="${'status-badge ' + #strings.toLowerCase(invoice.status)}"
+                        th:text="${invoice.status}"
+                ></span>
+                </td>
+                <td th:text="${invoice.totalAmount + ' $'}"></td>
+                <td>
+                    <button
+                            class="edit-btn"
+                            th:onclick="'editInvoice(' + ${invoice.id} + ')'"
+                    >
+                        ✏️
+                    </button>
+                    <button
+                            class="view-btn"
+                            th:onclick="'viewInvoice(' + ${invoice.id} + ')'"
+                    >
+                        👁️
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
 
-    <div class="bottom-pagination">
-      <div class="pagination">
-        <a href="#" class="page-btn disabled">«</a>
-        <a href="#" class="page-btn active">1</a>
-        <a href="#" class="page-btn">2</a>
-        <a href="#" class="page-btn">3</a>
-        <a href="#" class="page-btn">»</a>
-      </div>
+        <div class="bottom-pagination" th:if="${#lists.size(invoices) > 0}">
+            <div class="pagination">
+                <!-- Previous button -->
+                <a
+                        th:if="${hasPrevious}"
+                        th:href="@{/admin/invoice(page=${currentPage - 1}, search=${param.search}, dateFrom=${param.dateFrom}, dateTo=${param.dateTo})}"
+                        class="page-btn"
+                >«</a
+                >
+                <a th:unless="${hasPrevious}" href="#" class="page-btn disabled"
+                >«</a
+                >
+
+                <!-- Page numbers -->
+                <th:block
+                        th:with="start=${T(Math).max(1, currentPage - 2)}, end=${T(Math).min(totalPages, currentPage + 2)}"
+                >
+                    <!-- First page if not in range -->
+                    <a
+                            th:if="${start > 1}"
+                            th:href="@{/admin/invoice(page=1, search=${param.search}, dateFrom=${param.dateFrom}, dateTo=${param.dateTo})}"
+                            class="page-btn"
+                    >1</a
+                    >
+                    <span th:if="${start > 2}" class="page-dots">...</span>
+
+                    <!-- Page numbers in range -->
+                    <a
+                            th:each="pageNum : ${#numbers.sequence(start, end)}"
+                            th:href="@{/admin/invoice(page=${pageNum}, search=${param.search}, dateFrom=${param.dateFrom}, dateTo=${param.dateTo})}"
+                            th:class="${'page-btn' + (pageNum == currentPage ? ' active' : '')}"
+                            th:text="${pageNum}"
+                    ></a>
+
+                    <!-- Last page if not in range -->
+                    <span th:if="${end < totalPages - 1}" class="page-dots">...</span>
+                    <a
+                            th:if="${end < totalPages}"
+                            th:href="@{/admin/invoice(page=${totalPages}, search=${param.search}, dateFrom=${param.dateFrom}, dateTo=${param.dateTo})}"
+                            class="page-btn"
+                            th:text="${totalPages}"
+                    ></a>
+                </th:block>
+
+                <!-- Next button -->
+                <a
+                        th:if="${hasNext}"
+                        th:href="@{/admin/invoice(page=${currentPage + 1}, search=${param.search}, dateFrom=${param.dateFrom}, dateTo=${param.dateTo})}"
+                        class="page-btn"
+                >»</a
+                >
+                <a th:unless="${hasNext}" href="#" class="page-btn disabled">»</a>
+            </div>
+
+        </div>
     </div>
-  </div>
 </main>
 
-<!-- Modal Add Invoice -->
+<!-- View Invoice Details Modal -->
+<div id="viewInvoiceModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Invoice Details</h2>
 
+        <div class="invoice-info">
+            <div class="info-row">
+                <strong>Customer:</strong> <span id="modalCustomerName"></span>
+            </div>
+            <div class="info-row">
+                <strong>Invoice Date:</strong> <span id="modalInvoiceDate"></span>
+            </div>
+            <div class="info-row">
+                <strong>Status:</strong> <span id="modalInvoiceStatus"></span>
+            </div>
+            <div class="info-row">
+                <strong>Total Amount:</strong> <span id="modalTotalAmount"></span>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="detail-table">
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Product Name</th>
+                    <th>Brand</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Subtotal</th>
+                </tr>
+                </thead>
+                <tbody id="modalInvoiceDetails">
+                <!-- Chi tiết hóa đơn sẽ được thêm vào đây -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Invoice Status Modal -->
+<div id="editInvoiceModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Edit Invoice Status</h2>
+
+        <div class="invoice-info">
+            <div class="info-row">
+                <strong>Customer:</strong> <span id="editModalCustomerName"></span>
+            </div>
+            <div class="info-row">
+                <strong>Invoice Date:</strong>
+                <span id="editModalInvoiceDate"></span>
+            </div>
+            <div class="info-row">
+                <strong>Current Status:</strong>
+                <span id="editModalCurrentStatus"></span>
+            </div>
+            <div class="info-row">
+                <strong>Total Amount:</strong>
+                <span id="editModalTotalAmount"></span>
+            </div>
+        </div>
+
+        <form id="editStatusForm">
+            <input type="hidden" id="editInvoiceId" name="invoiceId"/>
+            <div class="form-group">
+                <label for="newStatus"
+                >New Status <span class="required">*</span></label
+                >
+                <select id="newStatus" name="status" required>
+                    <option value="">Select Status</option>
+                    <option value="PENDING">PENDING</option>
+                    <option value="CONFIRMED">CONFIRMED</option>
+                    <option value="SHIPING">SHIPING</option>
+                    <option value="COMPLETED">COMPLETED</option>
+                    <option value="CANCELED">CANCELED</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="cancel-btn" onclick="closeEditModal()">
+                    Cancel
+                </button>
+                <button type="submit" class="save-btn">Update Status</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Lấy các phần tử modal
+    const viewInvoiceModal = document.getElementById("viewInvoiceModal");
+    const closeModal = viewInvoiceModal.querySelector(".close");
+    const editInvoiceModal = document.getElementById("editInvoiceModal");
+    const closeEditModalBtn = editInvoiceModal.querySelector(".close");
+
+    // Đóng modal khi click vào dấu X
+    closeModal.addEventListener("click", () => {
+        viewInvoiceModal.style.display = "none";
+    });
+
+    closeEditModalBtn.addEventListener("click", () => {
+        editInvoiceModal.style.display = "none";
+    });
+
+    // Đóng modal khi click ra ngoài
+    window.addEventListener("click", (event) => {
+        if (event.target === viewInvoiceModal) {
+            viewInvoiceModal.style.display = "none";
+        }
+        if (event.target === editInvoiceModal) {
+            editInvoiceModal.style.display = "none";
+        }
+    });
+
+    function editInvoice(id) {
+        // Lấy thông tin hóa đơn từ server
+        fetch(`/admin/invoice/${id}/details`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data) {
+                    // Hiển thị thông tin hóa đơn trong modal edit
+                    document.getElementById("editModalCustomerName").textContent =
+                        data.customerName;
+                    document.getElementById("editModalInvoiceDate").textContent =
+                        formatDate(data.createdAt);
+                    document.getElementById("editModalCurrentStatus").textContent =
+                        data.status;
+                    document.getElementById("editModalTotalAmount").textContent =
+                        data.totalAmount + " $";
+
+                    // Set invoice ID và current status
+                    document.getElementById("editInvoiceId").value = data.id;
+                    document.getElementById("newStatus").value = data.status;
+
+                    // Hiển thị modal
+                    editInvoiceModal.style.display = "block";
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("Có lỗi xảy ra khi lấy thông tin hóa đơn!");
+            });
+    }
+
+    function viewInvoice(id) {
+        // Lấy chi tiết hóa đơn từ server
+        fetch(`/admin/invoice/${id}/details`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data) {
+                    // Hiển thị thông tin hóa đơn
+                    document.getElementById("modalCustomerName").textContent =
+                        data.customerName;
+                    document.getElementById("modalInvoiceDate").textContent =
+                        formatDate(data.createdAt);
+                    document.getElementById("modalInvoiceStatus").textContent =
+                        data.status;
+                    document.getElementById("modalTotalAmount").textContent =
+                        data.totalAmount + " $";
+
+                    // Hiển thị chi tiết sản phẩm
+                    const tbody = document.getElementById("modalInvoiceDetails");
+                    tbody.innerHTML = "";
+
+                    data.details.forEach((detail, index) => {
+                        const row = document.createElement("tr");
+
+                        row.innerHTML = `
+                  <td>${index + 1}</td>
+                  <td>${detail.productName}</td>
+                  <td>${detail.brand}</td>
+                  <td>${detail.quantity}</td>
+                  <td>${detail.unitPrice} $</td>
+                  <td>${detail.subtotal} $</td>
+                `;
+                        tbody.appendChild(row);
+                    });
+
+                    // Hiển thị modal
+                    viewInvoiceModal.style.display = "block";
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("Có lỗi xảy ra khi lấy thông tin hóa đơn!");
+            });
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return (
+            date.toLocaleDateString("vi-VN") +
+            " " +
+            date.toLocaleTimeString("vi-VN", {
+                hour: "2-digit",
+                minute: "2-digit",
+            })
+        );
+    }
+
+    function closeEditModal() {
+        document.getElementById("editInvoiceModal").style.display = "none";
+    }
+
+    function reloadPage() {
+        // Đóng modal trước khi reload
+        closeEditModal();
+        // Reload trang ngay lập tức
+        location.reload();
+    }
+
+    function clearSearch() {
+        // Clear all search inputs
+        document.querySelector('input[name="search"]').value = "";
+        document.querySelector('input[name="dateFrom"]').value = "";
+        document.querySelector('input[name="dateTo"]').value = "";
+
+        // Submit form to reload with cleared search
+        document.querySelector(".search-box").submit();
+    }
+
+    // Add date validation
+    document.addEventListener("DOMContentLoaded", function () {
+        const dateFrom = document.querySelector('input[name="dateFrom"]');
+        const dateTo = document.querySelector('input[name="dateTo"]');
+
+        if (dateFrom && dateTo) {
+            dateFrom.addEventListener("change", function () {
+                if (dateTo.value && this.value > dateTo.value) {
+                    alert("From date cannot be later than To date");
+                    this.value = "";
+                }
+            });
+
+            dateTo.addEventListener("change", function () {
+                if (dateFrom.value && this.value < dateFrom.value) {
+                    alert("To date cannot be earlier than From date");
+                    this.value = "";
+                }
+            });
+        }
+    });
+
+    // Xử lý form cập nhật trạng thái
+    document
+        .getElementById("editStatusForm")
+        .addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const invoiceId = document.getElementById("editInvoiceId").value;
+            const newStatus = document.getElementById("newStatus").value;
+
+            if (!newStatus) {
+                alert("Vui lòng chọn trạng thái mới!");
+                return;
+            }
+
+            // Gửi request cập nhật trạng thái
+            const formData = new FormData();
+            formData.append("invoiceId", invoiceId);
+            formData.append("status", newStatus);
+
+            fetch("/admin/invoice/update-status", {
+                method: "POST",
+                body: formData,
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        throw new Error("Network response was not ok");
+                    }
+                })
+                .then((result) => {
+                    console.log("Response:", result);
+                    // Bỏ kiểm tra kết quả, luôn reload
+                    location.reload();
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    alert("Có lỗi xảy ra khi cập nhật trạng thái!");
+                });
+        });
+</script>
 </body>
 </html>

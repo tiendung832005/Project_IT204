@@ -29,6 +29,9 @@ public class ProductDTO {
     private MultipartFile image;
     private String currentImage;
 
+    @NotBlank(message = "Trạng thái không được để trống!")
+    private String status;
+
     // Constructor
     public ProductDTO() {
     }
@@ -88,5 +91,13 @@ public class ProductDTO {
 
     public void setCurrentImage(String currentImage) {
         this.currentImage = currentImage;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

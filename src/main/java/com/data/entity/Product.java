@@ -31,4 +31,6 @@ public class Product {
     private Integer stock;
     @Column(nullable = false, length = 255)
     private String image;
+    @Column(nullable = false)
+    private String status;
 }

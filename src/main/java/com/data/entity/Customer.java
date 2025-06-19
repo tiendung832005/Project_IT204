@@ -1,8 +1,13 @@
 package com.data.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "customer")
 public class Customer {
     @Id
@@ -15,7 +20,7 @@ public class Customer {
     @Column(length = 20)
     private String phone;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Column(length = 255)
@@ -82,5 +87,17 @@ public class Customer {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", status='" + status + '\'' +
+                '}';
     }
 }

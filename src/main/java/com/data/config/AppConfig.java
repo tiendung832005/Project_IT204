@@ -58,7 +58,6 @@ public class AppConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/css/**")
                 .addResourceLocations("/WEB-INF/css/");
-
     }
 
     // ========== MULTIPART RESOLVER ==========

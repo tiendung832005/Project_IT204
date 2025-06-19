@@ -37,6 +37,7 @@ public class CustomerController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("search", search);
+        model.addAttribute("pageSize", PAGE_SIZE);
 
         if (!model.containsAttribute("customerDTO")) {
             model.addAttribute("customerDTO", new CustomerDTO());
@@ -52,43 +53,66 @@ public class CustomerController {
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        if (result.hasErrors()) {
-            // Lấy lại danh sách khách hàng
-            List<Customer> customers = customerService.getCustomers(1, PAGE_SIZE);
-            model.addAttribute("customers", customers);
-            model.addAttribute("currentPage", 1);
-            model.addAttribute("totalPages", (int) Math.ceil((double) customerService.getTotalCustomers() / PAGE_SIZE));
-            // Giữ lại dữ liệu đã nhập
-            model.addAttribute("customerDTO", customerDTO);
-            return "admin/customer";
-        }
+        System.out.println("Received customer data: " + customerDTO.toString());
 
         try {
+            // Kiểm tra phone trùng lặp
+            if (customerDTO.getPhone() == null || customerDTO.getPhone().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Số điện thoại không được để trống!");
+                return "redirect:/admin/customer";
+            }
+
+            if (customerService.isPhoneDuplicate(customerDTO.getPhone())) {
+                redirectAttributes.addFlashAttribute("error", "Số điện thoại đã tồn tại!");
+                return "redirect:/admin/customer";
+            }
+
             // Kiểm tra email trùng lặp
-            if (customerDTO.getEmail() != null && !customerDTO.getEmail().trim().isEmpty()) {
-                if (customerService.isEmailDuplicate(customerDTO.getEmail())) {
-                    redirectAttributes.addFlashAttribute("error", "Email đã tồn tại!");
-                    return "redirect:/admin/customer";
-                }
+            if (customerDTO.getEmail() == null || customerDTO.getEmail().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Email không được để trống!");
+                return "redirect:/admin/customer";
+            }
+
+            if (customerService.isEmailDuplicate(customerDTO.getEmail())) {
+                redirectAttributes.addFlashAttribute("error", "Email đã tồn tại!");
+                return "redirect:/admin/customer";
+            }
+
+            if (result.hasErrors()) {
+                System.out.println("Validation errors: " + result.getAllErrors());
+                // Lấy lại danh sách khách hàng
+                List<Customer> customers = customerService.getCustomers(1, PAGE_SIZE);
+                model.addAttribute("customers", customers);
+                model.addAttribute("currentPage", 1);
+                model.addAttribute("totalPages",
+                        (int) Math.ceil((double) customerService.getTotalCustomers() / PAGE_SIZE));
+                // Giữ lại dữ liệu đã nhập
+                model.addAttribute("customerDTO", customerDTO);
+                return "admin/customer";
             }
 
             // Tạo khách hàng mới
             Customer customer = new Customer();
-            customer.setName(customerDTO.getName());
-            customer.setPhone(customerDTO.getPhone());
-            customer.setEmail(customerDTO.getEmail());
-            customer.setAddress(customerDTO.getAddress());
+            customer.setName(customerDTO.getName().trim());
+            customer.setPhone(customerDTO.getPhone() != null ? customerDTO.getPhone().trim() : null);
+            customer.setEmail(customerDTO.getEmail().trim());
+            customer.setAddress(customerDTO.getAddress() != null ? customerDTO.getAddress().trim() : null);
             customer.setStatus(customerDTO.getStatus());
+
+            System.out.println("Attempting to save customer: " + customer.toString());
 
             // Lưu vào database
             boolean success = customerService.addCustomer(customer);
 
             if (success) {
+                System.out.println("Customer saved successfully");
                 redirectAttributes.addFlashAttribute("message", "Thêm khách hàng thành công!");
             } else {
+                System.out.println("Failed to save customer");
                 redirectAttributes.addFlashAttribute("error", "Thêm khách hàng thất bại");
             }
         } catch (Exception e) {
+            System.err.println("Error in addCustomer: " + e.getMessage());
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
         }
@@ -112,5 +136,102 @@ public class CustomerController {
 
         response.put("exists", exists);
         return response;
+    }
+
+    @GetMapping("/customer/check-phone")
+    @ResponseBody
+    public Map<String, Boolean> checkPhone(
+            @RequestParam String phone,
+            @RequestParam(required = false) Integer id) {
+        Map<String, Boolean> reponse = new HashMap<>();
+        boolean exists;
+
+        if (id != null) {
+            exists = customerService.isPhoneDuplicate(phone, id);
+        } else {
+            exists = customerService.isPhoneDuplicate(phone);
+        }
+        reponse.put("exists", exists);
+        return reponse;
+    }
+
+    @PostMapping("/customer/update-status")
+    @ResponseBody
+    public Map<String, Object> updateStatus(
+            @RequestParam Integer id,
+            @RequestParam String currentStatus) {
+        Map<String, Object> response = new HashMap<>();
+
+        String newStatus = currentStatus.equals("Active") ? "Deactivate" : "Active";
+        boolean success = customerService.updateCustomerStatus(id, newStatus);
+
+        response.put("success", success);
+        response.put("newStatus", newStatus);
+        return response;
+    }
+
+    @GetMapping("/customer/{id}")
+    @ResponseBody
+    public CustomerDTO getCustomer(@PathVariable Integer id) {
+        Customer customer = customerService.getCustomerById(id);
+        if (customer != null) {
+            CustomerDTO dto = new CustomerDTO();
+            dto.setId(customer.getId());
+            dto.setName(customer.getName());
+            dto.setEmail(customer.getEmail());
+            dto.setPhone(customer.getPhone());
+            dto.setAddress(customer.getAddress());
+            dto.setStatus(customer.getStatus());
+            return dto;
+        }
+        return null;
+    }
+
+    @PostMapping("/customer/update")
+    public String updateCustomer(
+            @Valid @ModelAttribute CustomerDTO customerDTO,
+            BindingResult result,
+            RedirectAttributes redirectAttributes) {
+
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Dữ liệu không hợp lệ!");
+            return "redirect:/admin/customer";
+        }
+
+        try {
+            // Kiểm tra email trùng lặp
+            if (customerService.isEmailDuplicate(customerDTO.getEmail(), customerDTO.getId())) {
+                redirectAttributes.addFlashAttribute("error", "Email đã tồn tại!");
+                return "redirect:/admin/customer";
+            }
+
+            // Kiểm tra phone trùng lặp
+            if (customerService.isPhoneDuplicate(customerDTO.getPhone(), customerDTO.getId())) {
+                redirectAttributes.addFlashAttribute("error", "Số điện thoại đã tồn tại!");
+                return "redirect:/admin/customer";
+            }
+
+            Customer customer = customerService.getCustomerById(customerDTO.getId());
+            if (customer != null) {
+                customer.setName(customerDTO.getName().trim());
+                customer.setPhone(customerDTO.getPhone() != null ? customerDTO.getPhone().trim() : null);
+                customer.setEmail(customerDTO.getEmail().trim());
+                customer.setAddress(customerDTO.getAddress() != null ? customerDTO.getAddress().trim() : null);
+                customer.setStatus(customerDTO.getStatus());
+
+                boolean success = customerService.updateCustomer(customer);
+                if (success) {
+                    redirectAttributes.addFlashAttribute("message", "Cập nhật khách hàng thành công!");
+                } else {
+                    redirectAttributes.addFlashAttribute("error", "Cập nhật khách hàng thất bại!");
+                }
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy khách hàng!");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
+        }
+
+        return "redirect:/admin/customer";
     }
 }
