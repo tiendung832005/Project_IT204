@@ -1,257 +1,258 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mobile SHOP - Admin Dashboard</title>
-  <link rel="stylesheet" href="/css/dashboard.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-<!-- Header -->
-<header class="header">
-  <div class="logo">Mobile <span class="shop-text">SHOP</span></div>
-</header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mobile SHOP - Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/dashboard.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">Mobile <span class="shop-text">SHOP</span></div>
+    </header>
 
-<!-- Sidebar -->
-<aside class="sidebar">
-  <nav>
-    <ul class="sidebar-menu">
-      <li>
-        <a href="/admin/dashboard" class="active"
-        ><span class="icon">📊</span> Dashboard</a
-        >
-      </li>
-      <li>
-        <a href="/admin/customer"><span class="icon">👥</span> Customer</a>
-      </li>
-      <li>
-        <a href="/admin/product"><span class="icon">📱</span> Products</a>
-      </li>
-      <li>
-        <a href="/admin/invoice"><span class="icon">📄</span> Invoices</a>
-      </li>
-    </ul>
-  </nav>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav>
+        <ul class="sidebar-menu">
+          <li>
+            <a href="/admin/dashboard" class="active"
+              ><span class="icon">📊</span> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="/admin/customer"><span class="icon">👥</span> Customer</a>
+          </li>
+          <li>
+            <a href="/admin/product"><span class="icon">📱</span> Products</a>
+          </li>
+          <li>
+            <a href="/admin/invoice"><span class="icon">📄</span> Invoices</a>
+          </li>
+        </ul>
+      </nav>
 
-  <div class="sign-out">
-    <a href="/admin/logout"><span class="icon">🚪</span> Sign out</a>
-  </div>
-</aside>
+      <div class="sign-out">
+        <a href="/admin/logout"><span class="icon">🚪</span> Sign out</a>
+      </div>
+    </aside>
 
-<!-- Main Content -->
-<main class="main-content">
-  <!-- Stats Cards -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Total Revenue</div>
-      <div th:text="${totalRevenue} + ' $'" class="stat-value"></div>
-      <div class="stat-change positive">+36% ↑</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Total Product</div>
-      <div th:text="${totalProduct} + ' người dùng'" class="stat-value">1,500</div>
-      <div class="stat-change negative">+14% ↑</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Total Invoice</div>
-      <div th:text="${totalInvoice} + ' hóa đơn'"  class="stat-value">84,382</div>
-      <div class="stat-change positive">+36% ↑</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Total User</div>
-      <div th:text="${totalUser} + ' người dùng'" class="stat-value">33,493</div>
-      <div class="stat-change positive">+36% ↑</div>
-    </div>
-  </div>
-
-  <!-- Content Grid -->
-  <div class="content-grid">
-    <!-- Sales Report Chart -->
-    <div class="chart-section">
-      <div class="chart-header">
-        <h3 class="chart-title">Sales Report</h3>
-        <div style="display: flex; gap: 20px; align-items: center">
-          <div class="chart-filters">
-            <button class="filter-btn active">12 Months</button>
-            <button class="filter-btn">6 Months</button>
-            <button class="filter-btn">30 Days</button>
-            <button class="filter-btn">7 Days</button>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Revenue</div>
+          <div th:text="${totalRevenue} + ' $'" class="stat-value"></div>
+          <div class="stat-change positive">+36% ↑</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Product</div>
+          <div th:text="${totalProduct} + ' PRODUCT'" class="stat-value">
+            1,500
           </div>
-          <button class="export-btn">📄 Export PDF</button>
+          <div class="stat-change negative">+14% ↑</div>
         </div>
-      </div>
-      <div class="chart-container">
-        <canvas id="salesChart"></canvas>
-      </div>
-    </div>
-
-    <!-- Traffic Sources -->
-    <div class="traffic-section">
-      <div class="traffic-header">
-        <h3 class="traffic-title">Traffic Sources</h3>
-        <span class="traffic-filter">Last 7 Days ▼</span>
-      </div>
-      <div class="traffic-item">
-        <div class="traffic-source">
-          <div class="traffic-bar direct"></div>
-          <span>Direct</span>
+        <div class="stat-card">
+          <div class="stat-label">Total Invoice</div>
+          <div th:text="${totalInvoice} + ' INVOICE'" class="stat-value">
+            84,382
+          </div>
+          <div class="stat-change positive">+36% ↑</div>
         </div>
-        <div class="traffic-value">1,43,382</div>
-      </div>
-      <div class="traffic-item">
-        <div class="traffic-source">
-          <div class="traffic-bar referral"></div>
-          <span>Referral</span>
+        <div class="stat-card">
+          <div class="stat-label">Total User</div>
+          <div th:text="${totalUser} + ' USER'" class="stat-value">
+            33,493
+          </div>
+          <div class="stat-change positive">+36% ↑</div>
         </div>
-        <div class="traffic-value">87,974</div>
-      </div>
-      <div class="traffic-item">
-        <div class="traffic-source">
-          <div class="traffic-bar social"></div>
-          <span>Social Media</span>
-        </div>
-        <div class="traffic-value">45,211</div>
-      </div>
-      <div class="traffic-item">
-        <div class="traffic-source">
-          <div class="traffic-bar twitter"></div>
-          <span>Twitter</span>
-        </div>
-        <div class="traffic-value">21,893</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bottom Grid -->
-  <div class="bottom-grid">
-    <!-- Transactions -->
-    <div class="transactions-section">
-      <div class="transactions-header">
-        <h3 class="transactions-title">Transactions</h3>
-        <a href="#" class="see-all-link">See All Transactions →</a>
       </div>
 
-      <div th:each="invoice : ${invoiceNews}" class="transaction-item">
-        <div th:class="${'status-badge1 ' + #strings.toLowerCase(invoice.status)}"></div>
-        <div class="transaction-details">
-          <div class="transaction-method">Visa card ****4831</div>
-          <div th:class="${'status-badge ' + #strings.toLowerCase(invoice.status)}" th:text="${invoice.status}" class="transaction-type">Card payment</div>
+      <!-- Content Grid -->
+      <div class="content-grid">
+        <!-- Sales Report Chart -->
+        <div class="chart-section">
+          <div class="chart-header">
+            <h3 class="chart-title">Sales Report</h3>
+            <div style="display: flex; gap: 20px; align-items: center">
+              <div class="chart-filters">
+                <button class="filter-btn active">12 Months</button>
+                <button class="filter-btn">6 Months</button>
+                <button class="filter-btn">30 Days</button>
+                <button class="filter-btn">7 Days</button>
+              </div>
+              <button class="export-btn">📄 Export PDF</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="salesChart"></canvas>
+          </div>
         </div>
-        <div>
-          <div th:text="${invoice.totalAmount}" class="transaction-amount">$182.94</div>
-          <div th:text="${invoice.createdAt}" class="transaction-date">Jan 17, 2022</div>
+
+        <!-- Traffic Sources -->
+        <div class="traffic-section">
+          <div class="traffic-header">
+            <h3 class="traffic-title">Traffic Sources</h3>
+            <span class="traffic-filter">Last 7 Days ▼</span>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">
+              <div class="traffic-bar direct"></div>
+              <span>Direct</span>
+            </div>
+            <div class="traffic-value">1,43,382</div>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">
+              <div class="traffic-bar referral"></div>
+              <span>Referral</span>
+            </div>
+            <div class="traffic-value">87,974</div>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">
+              <div class="traffic-bar social"></div>
+              <span>Social Media</span>
+            </div>
+            <div class="traffic-value">45,211</div>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">
+              <div class="traffic-bar twitter"></div>
+              <span>Twitter</span>
+            </div>
+            <div class="traffic-value">21,893</div>
+          </div>
         </div>
-        <div class="transaction-company">Amazon</div>
       </div>
 
+      <!-- Bottom Grid -->
+      <div class="bottom-grid">
+        <!-- Transactions -->
+        <div class="transactions-section">
+          <div class="transactions-header">
+            <h3 class="transactions-title">Transactions</h3>
+            <a href="#" class="see-all-link">See All Transactions →</a>
+          </div>
 
-<!--      <div class="transaction-item">-->
-<!--        <div class="transaction-status completed"></div>-->
-<!--        <div class="transaction-details">-->
-<!--          <div class="transaction-method">Mastercard ****6442</div>-->
-<!--          <div class="transaction-type">Card payment</div>-->
-<!--        </div>-->
-<!--        <div>-->
-<!--          <div class="transaction-amount">$99.00</div>-->
-<!--          <div class="transaction-date">Jan 17, 2022</div>-->
-<!--        </div>-->
-<!--        <div class="transaction-company">Facebook</div>-->
-<!--      </div>-->
-<!--      <div class="transaction-item">-->
-<!--        <div class="transaction-status pending"></div>-->
-<!--        <div class="transaction-details">-->
-<!--          <div class="transaction-method">Account ****882</div>-->
-<!--          <div class="transaction-type">Bank payment</div>-->
-<!--        </div>-->
-<!--        <div>-->
-<!--          <div class="transaction-amount">$249.94</div>-->
-<!--          <div class="transaction-date">Jan 17, 2022</div>-->
-<!--        </div>-->
-<!--        <div class="transaction-company">Netflix</div>-->
-<!--      </div>-->
-<!--      <div class="transaction-item">-->
-<!--        <div class="transaction-status canceled"></div>-->
-<!--        <div class="transaction-details">-->
-<!--          <div class="transaction-method">Amex card ****5666</div>-->
-<!--          <div class="transaction-type">Card payment</div>-->
-<!--        </div>-->
-<!--        <div>-->
-<!--          <div class="transaction-amount">$199.24</div>-->
-<!--          <div class="transaction-date">Jan 17, 2022</div>-->
-<!--        </div>-->
-<!--        <div class="transaction-company">Amazon Prime</div>-->
-<!--      </div>-->
-    </div>
-
-    <!-- Recent Customers -->
-    <div class="customers-section">
-      <h3 class="customers-title">Recent Customers</h3>
-      <div th:each="invoice : ${invoiceNews}" class="customer-item">
-        <div class="customer-avatar">JW</div>
-        <div class="customer-info">
-          <div th:text="${invoice.customer.getName()}" class="customer-name">Jenny Wilson</div>
-          <div th:text="${invoice.customer.getEmail()}">w.lawson@example.com</div>
+          <div th:each="invoice : ${invoiceNews}" class="transaction-item">
+            <div
+              th:class="${'status-badge1 ' + #strings.toLowerCase(invoice.status)}"
+            ></div>
+            <div class="transaction-details">
+              <div class="transaction-method">Visa card ****4831</div>
+              <div
+                th:class="${'status-badge ' + #strings.toLowerCase(invoice.status)}"
+                th:text="${invoice.status}"
+                class="transaction-type"
+              >
+                Card payment
+              </div>
+            </div>
+            <div>
+              <div th:text="${invoice.totalAmount}" class="transaction-amount">
+                $182.94
+              </div>
+              <div th:text="${invoice.createdAt}" class="transaction-date">
+                Jan 17, 2022
+              </div>
+            </div>
+            <div class="transaction-company">Amazon</div>
+          </div>
         </div>
-        <div class="customer-details">
-            <div th:text="${invoice.totalAmount} + ' $'"></div>
-          <div th:text="${invoice.customer.getAddress()}">Austin</div>
+
+        <!-- Recent Customers -->
+        <div class="customers-section">
+          <h3 class="customers-title">Recent Customers</h3>
+          <div th:each="invoice : ${invoiceNews}" class="customer-item">
+            <div class="customer-avatar">JW</div>
+            <div class="customer-info">
+              <div
+                th:text="${invoice.customer.getName()}"
+                class="customer-name"
+              >
+                Jenny Wilson
+              </div>
+              <div th:text="${invoice.customer.getEmail()}">
+                w.lawson@example.com
+              </div>
+            </div>
+            <div class="customer-details">
+              <div th:text="${invoice.totalAmount} + ' $'"></div>
+              <div th:text="${invoice.customer.getAddress()}">Austin</div>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 20px">
+            <a href="/admin/customer" class="see-all-link"
+              >SEE ALL CUSTOMERS →</a
+            >
+          </div>
         </div>
       </div>
-      <div style="text-align: center; margin-top: 20px">
-        <a href="/admin/customer" class="see-all-link">SEE ALL CUSTOMERS →</a>
-      </div>
-    </div>
-  </div>
-</main>
-</body>
+    </main>
+  </body>
 </html>
 <script>
-  const ctx = document.getElementById("salesChart").getContext("2d");
-  const salesChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: [
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-        "Jan",
-      ],
-      datasets: [
-        {
-          label: "Sales",
-          data: [
-            10000, 12000, 15000, 20000, 45591, 35000, 40000, 42000, 46000,
-            47000, 49000, 50000,
-          ],
-          fill: true,
-          backgroundColor: "rgba(54, 162, 235, 0.2)",
-          borderColor: "rgba(54, 162, 235, 1)",
-          tension: 0.4, // bo góc mượt như sóng
-          pointRadius: 5,
-          pointHoverRadius: 8,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
+  let salesChartInstance = null;
+  async function fetchSalesData(filter = "12months") {
+    const res = await fetch(`/admin/dashboard/sales-data?filter=${filter}`);
+    return await res.json();
+  }
+
+  function renderSalesChart(salesData) {
+    const ctx = document.getElementById("salesChart").getContext("2d");
+    if (salesChartInstance) salesChartInstance.destroy();
+    salesChartInstance = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: salesData.labels,
+        datasets: [
+          {
+            label: "Sales",
+            data: salesData.data,
+            fill: true,
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            tension: 0.4,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+          },
+        ],
       },
-      scales: {
-        y: {
-          beginAtZero: true,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
         },
       },
-    },
+    });
+  }
+
+  function setActiveFilter(btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  document.querySelectorAll('.filter-btn').forEach((btn, idx) => {
+    btn.addEventListener('click', function() {
+      setActiveFilter(this);
+      let filter = "12months";
+      if (idx === 1) filter = "6months";
+      else if (idx === 2) filter = "30days";
+      else if (idx === 3) filter = "7days";
+      fetchSalesData(filter).then(renderSalesChart);
+    });
   });
+
+  // Load mặc định 12 tháng
+  fetchSalesData().then(renderSalesChart);
 </script>

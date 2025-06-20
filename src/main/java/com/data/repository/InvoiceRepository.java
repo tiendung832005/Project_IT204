@@ -194,7 +194,7 @@ public class InvoiceRepository {
     }
 
     public List<Invoice> searchInvoicesWithPagination(String search, String dateFrom, String dateTo, int page,
-                                                      int pageSize) {
+            int pageSize) {
         Session session = null;
         Transaction transaction = null;
         try {
@@ -314,6 +314,69 @@ public class InvoiceRepository {
             }
             e.printStackTrace();
             return false;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
+
+    /**
+     * Lấy tổng doanh thu theo từng tháng trong năm hiện tại (12 tháng)
+     * 
+     * @return List<Object[]>: mỗi phần tử là [Integer month, Double totalRevenue]
+     */
+    public List<Object[]> getMonthlyRevenueOfYear(int year) {
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            String hql = "SELECT MONTH(i.createdAt), SUM(i.totalAmount) FROM Invoice i WHERE YEAR(i.createdAt) = :year GROUP BY MONTH(i.createdAt) ORDER BY MONTH(i.createdAt)";
+            Query<Object[]> query = session.createQuery(hql, Object[].class);
+            query.setParameter("year", year);
+            List<Object[]> results = query.list();
+            transaction.commit();
+            return results;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
+
+    /**
+     * Lấy doanh thu theo từng ngày trong khoảng from - to (bao gồm)
+     * 
+     * @param from LocalDate
+     * @param to   LocalDate
+     * @return List<Object[]>: [java.sql.Date, Double revenue]
+     */
+    public List<Object[]> getRevenueByDay(java.time.LocalDate from, java.time.LocalDate to) {
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            String hql = "SELECT CAST(i.createdAt AS date), SUM(i.totalAmount) FROM Invoice i WHERE i.createdAt >= :from AND i.createdAt <= :to GROUP BY CAST(i.createdAt AS date) ORDER BY CAST(i.createdAt AS date)";
+            Query<Object[]> query = session.createQuery(hql, Object[].class);
+            query.setParameter("from", java.sql.Date.valueOf(from));
+            query.setParameter("to", java.sql.Date.valueOf(to));
+            List<Object[]> results = query.list();
+            transaction.commit();
+            return results;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return null;
         } finally {
             if (session != null) {
                 session.close();

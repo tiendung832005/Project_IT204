@@ -303,4 +303,24 @@ public class InvoiceService {
 
         return new InvoiceDTO.PageResult<>(invoices, page, totalPages, totalElements, pageSize);
     }
+
+    /**
+     * Lấy tổng doanh thu theo từng tháng trong năm hiện tại (12 tháng)
+     * 
+     * @return List<Object[]>: mỗi phần tử là [Integer month, Double totalRevenue]
+     */
+    public List<Object[]> getMonthlyRevenueOfYear(int year) {
+        return invoiceRepository.getMonthlyRevenueOfYear(year);
+    }
+
+    /**
+     * Lấy doanh thu theo từng ngày trong khoảng from - to (bao gồm)
+     * 
+     * @param from LocalDate
+     * @param to   LocalDate
+     * @return List<Object[]>: [java.sql.Date, Double revenue]
+     */
+    public List<Object[]> getRevenueByDay(java.time.LocalDate from, java.time.LocalDate to) {
+        return invoiceRepository.getRevenueByDay(from, to);
+    }
 }
