@@ -51,15 +51,20 @@ public class InvoiceController {
         model.addAttribute("totalElements", pageResult.getTotalElements());
         model.addAttribute("hasNext", pageResult.isHasNext());
         model.addAttribute("hasPrevious", pageResult.isHasPrevious());
+        model.addAttribute("pageSize", pageSize);
 
         return "admin/invoice";
     }
 
     @GetMapping("/invoiceDetail")
     public String showInvoiceDetailForm(Model model) {
-        // Lấy danh sách khách hàng và sản phẩm cho form
-        List<Customer> customers = customerService.getCustomers(1, Integer.MAX_VALUE);
-        List<Product> products = productService.getProducts(1, Integer.MAX_VALUE);
+        // Lấy danh sách khách hàng và sản phẩm cho form, chỉ lấy ACTIVE
+        List<Customer> customers = customerService.getAllCustomers().stream()
+                .filter(c -> "ACTIVE".equalsIgnoreCase(c.getStatus()))
+                .collect(java.util.stream.Collectors.toList());
+        List<Product> products = productService.getAllProducts().stream()
+                .filter(p -> "ACTIVE".equalsIgnoreCase(p.getStatus()))
+                .collect(java.util.stream.Collectors.toList());
 
         model.addAttribute("customers", customers);
         model.addAttribute("products", products);

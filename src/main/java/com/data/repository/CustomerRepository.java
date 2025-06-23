@@ -18,7 +18,8 @@ public class CustomerRepository {
 
     public List<Customer> getCustomers(int page, int pageSize) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Customer> query = session.createQuery("FROM Customer ORDER BY id ASC", Customer.class);
+            Query<Customer> query = session.createQuery("FROM Customer ORDER BY id ASC",
+                    Customer.class);
             query.setFirstResult((page - 1) * pageSize);
             query.setMaxResults(pageSize);
             return query.list();
@@ -154,6 +155,13 @@ public class CustomerRepository {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public List<Customer> getAllCustomers() {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Customer> query = session.createQuery("FROM Customer ORDER BY id ASC", Customer.class);
+            return query.list();
         }
     }
 }

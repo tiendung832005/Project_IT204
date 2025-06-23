@@ -62,4 +62,13 @@ public class CustomerService {
             return false;
         }
     }
+
+    public List<Customer> getAllCustomers() {
+        try {
+            return customerRepository.getAllCustomers();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return java.util.Collections.emptyList();
+        }
+    }
 }

@@ -24,7 +24,7 @@ public class ProductService {
     }
 
     public List<Product> searchProducts(String search, BigDecimal minPrice, BigDecimal maxPrice, Integer stock,
-                                        int page, int size) {
+            int page, int size) {
         return productRepository.searchProducts(search, minPrice, maxPrice, stock, page, size);
     }
 
@@ -58,5 +58,14 @@ public class ProductService {
 
     public boolean updateStatus(Integer id, String newStatus) {
         return productRepository.updateStatus(id, newStatus);
+    }
+
+    public List<Product> getAllProducts() {
+        try {
+            return productRepository.getAllProducts();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return java.util.Collections.emptyList();
+        }
     }
 }

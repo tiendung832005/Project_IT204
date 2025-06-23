@@ -74,7 +74,7 @@ public class ProductRepository {
     }
 
     public List<Product> searchProducts(String search, BigDecimal minPrice, BigDecimal maxPrice, Integer stock,
-                                        int page, int pageSize) {
+            int page, int pageSize) {
         Session session = null;
         Transaction tx = null;
         List<Product> products = new ArrayList<>();
@@ -364,6 +364,18 @@ public class ProductRepository {
             if (session != null) {
                 session.close();
             }
+        }
+    }
+
+    public List<Product> getAllProducts() {
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            Query<Product> query = session.createQuery("FROM Product", Product.class);
+            return query.list();
+        } finally {
+            if (session != null)
+                session.close();
         }
     }
 }
